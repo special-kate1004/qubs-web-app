@@ -1,1247 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QUBS - Staff Rostering</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QUBS - Staff Rostering</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI",
-        sans-serif;
-    }
-
-    body {
-      background: #f5f7fa;
-      color: #333;
-        /* width */
-      }
-      ::-webkit-scrollbar {
-        width: 6px;
-        height: 6px;
-      }
-      
-      /* Track */
-      ::-webkit-scrollbar-track {
-        background: transparent;
-      }
-      
-      /* Handle */
-      ::-webkit-scrollbar-thumb {
-        background: #393b3d81 ;
-        border-radius: 12px;
-      }
-      
-      /* Handle on hover */
-      ::-webkit-scrollbar-thumb:hover {
-        background: #393b3d81 ;
-    }
-
-    /* Remove header styles since we're removing the header */
-    .main-content {
-      height: 100vh;
-      display: flex;
-        overflow: auto;
-      gap: 0;
-      padding: 16px;
-    }
-
-    .schedule-section {
-      flex: 1;
-        padding: 0px 16px 0px 0px;
-      overflow: hidden;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      min-width: 0;
-    }
-
-    .schedule-wrapper {
-      border: none;
-      border-radius: 8px;
-      overflow: hidden;
-      background: white;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-
-    .controls {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px;
-      background: white;
-      border-bottom: 1px solid #e5e7eb;
-      position: relative;
-      z-index: 6;
-    }
-
-    .controls-left {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .controls-right {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .schedule-container {
-      overflow: auto;
-      flex: 1;
-      padding-top: 0;
-      background: white;
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
-    }
-
-    .date-range {
-      font-size: 28px;
-      font-weight: 700;
-      color: #111827;
-      min-width: 120px;
-    }
-
-    .date-nav {
-      display: flex;
-      align-items: center;
-        background: #f0f2f5;
-      border: 1px solid #00000014;
-      border-radius: 6px;
-      padding: 0;
-      width: 122px;
-      height: 30px;
-    }
-
-    .nav-arrow {
-      width: 30px;
-      height: 30px;
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #374151;
-      transition: all 0.2s;
-      font-size: 18px;
-      position: relative;
-      padding: 6px 0px;
-    }
-
-    .nav-arrow:first-child {
-      border-right: 1px solid #00000014;
-    }
-
-    .nav-arrow:last-child {
-      border-left: 1px solid #00000014;
-    }
-
-    .today-btn {
-      border-top-width: 1px;
-      border-bottom-width: 1px;
-      width: 62px;
-      height: 30px;
-      padding: 4px 12px;
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      color: #374151;
-      font-size: 14px;
-      font-weight: 400;
-      transition: all 0.2s;
-      text-align: center;
-    }
-
-    .filter-dropdown {
-        border: 1px solid #393B3D4D;
-      padding: 8px 16px;
-      background: white;
-        border-radius: 10px;
-      cursor: pointer;
-        width: 200px;
-        height: 42px;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 14px;
-    }
-
-    .dropdown-content {
-      display: none;
-      position: absolute;
-        top: calc(100% + 2px);
-      left: 0;
-      background: white;
-        border: 1px solid #00000014;
-        border-radius: 10px;
-      width: 100%;
-      z-index: 7;
-        box-shadow: 0px 4px 16px 0px #0000001f;
-        box-shadow: 0px 8px 10px 0px #0000001f;
-    }
-
-    .dropdown-content.show {
-      display: block;
-    }
-
-    .dropdown-item {
-      padding: 8px 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-      font-size: 14px;
-    }
-
-    .dropdown-item:hover {
-      background-color: #f3f4f6;
-    }
-
-    .dropdown-item input[type="checkbox"] {
-      margin: 0;
-      width: 16px;
-      height: 16px;
-      border: 1px solid #d1d5db;
-      border-radius: 3px;
-      cursor: pointer;
-    }
-
-    .selected-text {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      flex: 1;
-        font-weight: 400;
-        font-size: 16px;
-        color: #393B3D;
-      }
-
-      .dropdown-arrow-modal {
-        margin-right: 12px;
-        padding: 0px 8px;
-    }
-
-    .dropdown-arrow {
-      margin-left: 8px;
-      font-size: 10px;
-      color: #6b7280;
-      transition: transform 0.2s;
-    }
-
-    .dropdown-arrow.open {
-      transform: rotate(180deg);
-    }
-
-    /* Schedule Grid */
-    .schedule-grid {
-      background: white;
-      min-width: 1200px;
-      position: relative;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* Grid Header Styles */
-    .grid-header {
-      display: grid;
-      grid-template-columns: 180px repeat(7, 1fr);
-      border-bottom: 1px solid #e5e7eb;
-      background: white;
-      position: sticky;
-      top: 0;
-      z-index: 5;
-    }
-
-    .header-cell {
-      padding: 8px;
-      font-weight: 600;
-      text-align: center;
-      background: white;
-      border-right: 1px solid #e5e7eb;
-      }
-
-      .header-cell-name{
-        font-weight: 700;
-        font-size: 16px;
-        line-height: 142%;
-        letter-spacing: 0px;
-        text-align: center;
-        color: #9c9d9e;
-    }
-
-    .header-cell:first-child {
-      position: sticky;
-      left: 0;
-      background: white;
-      z-index: 6;
-      border-right: 1px solid #e5e7eb;
-      text-align: left;
-      padding: 8px 20px;
-    }
-
-    .header-cell:last-child {
-      border-right: none;
-    }
-
-    .day-header {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      justify-content: center;
-        font-weight: 700;
-        font-size: 16px;
-        line-height: 142%;
-        letter-spacing: 0px;
-        text-align: center;
-        color: #393B3D;
-    }
-
-    .staff-row {
-      display: grid;
-      grid-template-columns: 180px repeat(7, 1fr);
-      border-bottom: 1px solid #e5e7eb;
-      min-height: 68px;
-      position: relative;
-      background: white;
-    }
-
-    .staff-info {
-      padding: 8px 20px;
-      display: flex;
-      flex-direction: column;
-      position: sticky;
-      left: 0;
-      background: white;
-      z-index: 4;
-      border-right: 1px solid #e5e7eb;
-    }
-
-    /* Remove the shadow after names column */
-    .staff-info::after {
-      display: none;
-    }
-
-    .staff-name {
-        font-weight: 700;
-      margin-bottom: 4px;
-        color: #393B3D;
-        font-size: 14px;
-    }
-
-    .staff-hours {
-        font-weight: 400;
-        font-size: 11px;
-        color: #626466;
-    }
-
-    .day-cell {
-      padding: 2px;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      background: white;
-      transition: background-color 0.2s ease;
-      border-right: 1px solid #e5e7eb;
-    }
-
-    .day-cell:last-child {
-      border-right: none;
-    }
-
-    /* Base styles for shift blocks */
-    .shift-block {
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 400;
-      line-height: 1.4;
-      cursor: grab;
-      user-select: none;
-        transition: all 0.2s ease;
-      position: relative;
-      overflow: hidden;
-      padding-left: 16px;
-      min-height: 48px;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .shift-block .shift-title {
-      font-size: 13px;
-      font-weight: 400;
-    }
-
-    .shift-block .shift-time {
-      font-size: 11px;
-      font-weight: 400;
-    }
-
-    .shift-block::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 4px;
-    }
-
-    /* Room colors */
-    .shift-block[data-room="US01"] {
-      background-color: #d2e2fb;
-      color: #0d8aea;
-    }
-
-    .shift-block[data-room="US01"]::before {
-      background: #0d8aea;
-    }
-
-    .shift-block[data-room="US01"].active {
-      background-color: #0d8aea;
-      color: white;
-    }
-
-    .shift-block[data-room="US02"] {
-      background-color: #eedeff;
-      color: #ac58ff;
-    }
-
-    .shift-block[data-room="US02"]::before {
-      background: #ac58ff;
-    }
-
-    .shift-block[data-room="US02"].active {
-      background-color: #ac58ff;
-      color: white;
-    }
-
-    .shift-block[data-room="US03"] {
-      background-color: #ffdee9;
-      color: #ff5892;
-    }
-
-    .shift-block[data-room="US03"]::before {
-      background: #ff5892;
-    }
-
-    .shift-block[data-room="US03"].active {
-      background-color: #ff5892;
-      color: white;
-    }
-
-    .shift-block[data-room="CT"] {
-      background-color: #d7ebdf;
-      color: #399d60;
-    }
-
-    .shift-block[data-room="CT"]::before {
-      background: #399d60;
-    }
-
-    .shift-block[data-room="CT"].active {
-      background-color: #399d60;
-      color: white;
-    }
-
-    .shift-block[data-room="X-Ray"] {
-      background-color: #d7daf2;
-      color: #3847bc;
-    }
-
-    .shift-block[data-room="X-Ray"]::before {
-      background: #3847bc;
-    }
-
-    .shift-block[data-room="X-Ray"].active {
-      background-color: #3847bc;
-      color: white;
-    }
-
-    /* Workload colors */
-      .workload-item:has([class*="workload-room"]:contains("US 01"))
-        .workload-bar {
-      background-color: #d2e2fb !important;
-    }
-
-      .workload-item:has([class*="workload-room"]:contains("US 01"))
-        .workload-fill {
-      background: #0d8aea !important;
-    }
-
-      .workload-item:has([class*="workload-room"]:contains("US 02"))
-        .workload-bar {
-      background-color: #eedeff !important;
-    }
-
-      .workload-item:has([class*="workload-room"]:contains("US 02"))
-        .workload-fill {
-      background: #ac58ff !important;
-    }
-
-      .workload-item:has([class*="workload-room"]:contains("US 03"))
-        .workload-bar {
-      background-color: #ffdee9 !important;
-    }
-
-      .workload-item:has([class*="workload-room"]:contains("US 03"))
-        .workload-fill {
-      background: #ff5892 !important;
-    }
-
-      .workload-item:has([class*="workload-room"]:contains("CT"))
-        .workload-bar {
-      background-color: #d7ebdf !important;
-    }
-
-      .workload-item:has([class*="workload-room"]:contains("CT"))
-        .workload-fill {
-      background: #399d60 !important;
-    }
-
-      .workload-item:has([class*="workload-room"]:contains("X-Ray"))
-        .workload-bar {
-      background-color: #d7daf2 !important;
-    }
-
-      .workload-item:has([class*="workload-room"]:contains("X-Ray"))
-        .workload-fill {
-      background: #3847bc !important;
-    }
-
-    /* Remove old color classes */
-    .workload-blue,
-    .workload-purple,
-    .workload-pink,
-    .workload-green {
-      background: transparent !important;
-    }
-
-    .add-shift-btn {
-      width: 100%;
-      height: 48px;
-      border: none;
-      background: #e6e8eb;
-      border-radius: 10px;
-      cursor: pointer;
-      color: #000000;
-      font-size: 18px;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-    }
-
-    .day-cell:hover .add-shift-btn {
-      display: flex;
-    }
-
-    .add-shift-btn:hover {
-      background: #d9dce0;
-    }
-
-    /* Sidebar */
-    .sidebar {
-      width: 320px;
-      background: transparent;
-      border-left: none;
-        padding: 0px 16px 16px 0px ;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      flex-shrink: 0;
-        height: 100% ;
-      overflow-y: auto;
-    }
-
-    .workload-section {
-      background: white;
-        border-radius: 20px;
-        border: 2px solid #00000014;
-      flex-shrink: 0;
-    }
-
-    .workload-header-section {
-      background: #f0f2f5;
-      padding: 16px;
-        border-radius: 20px 20px 0 0;
-        border-bottom: 1px solid #00000014;
-    }
-
-    .workload-content {
-      padding: 16px;
-    }
-
-    .workload-item {
-      padding: 8px 0;
-    }
-
-    .workload-item:last-child {
-      padding-bottom: 0;
-    }
-
-    .workload-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-
-    .workload-room {
-        font-weight: 400;
-        font-size: 14px;
-        color: #393B3D;
-    }
-
-    .workload-hours-container {
-      text-align: right;
-      color: #6b7280;
-      font-size: 14px;
-    }
-
-    .workload-hours {
-        font-weight: 700;
-        font-size: 14px;
-        color: #393b3e;
-      }
-      
-      .workload-hours-current {
-        font-weight: 400;
-        font-size: 14px;
-        color: #393B3D;
-    }
-
-    .workload-total {
-        font-weight: 400;
-        font-size: 14px;
-        color: #393B3D;
-      }
-      
-      .workload-total-current {
-        font-weight: 400;
-        font-size: 14px;
-        color: #95969a;
-    }
-
-    /* Total workload specific styles */
-    .total-workload {
-      padding-bottom: 0;
-    }
-
-    .total-workload .workload-room {
-      font-weight: 600;
-    }
-
-    .workload-total-bar {
-      height: 12px;
-        border-radius: 4px;
-      overflow: hidden;
-      width: 100%;
-      margin-top: 8px;
-      background-color: #d2e2fb;
-    }
-
-    .workload-total-fill {
-      height: 100%;
-        border-radius: 4px;
-      transition: width 0.3s ease;
-      background-color: #206eec;
-    }
-
-    /* Regular workload bars */
-    .workload-bar {
-        height: 4px;
-      border-radius: 3px;
-      overflow: hidden;
-      width: 100%;
-      margin-top: 8px;
-      background-color: #f3f4f6;
-    }
-
-    .workload-fill {
-      height: 100%;
-      border-radius: 3px;
-      transition: width 0.3s ease;
-    }
-
-    /* Room-specific colors */
-    /* US01 */
-    [data-room="US01"] .workload-bar {
-      background-color: #d2e2fb !important;
-    }
-
-    [data-room="US01"] .workload-fill {
-      background-color: #0d8aea !important;
-    }
-
-    /* US02 */
-    [data-room="US02"] .workload-bar {
-      background-color: #eedeff !important;
-    }
-
-    [data-room="US02"] .workload-fill {
-      background-color: #ac58ff !important;
-    }
-
-    /* US03 */
-    [data-room="US03"] .workload-bar {
-      background-color: #ffdee9 !important;
-    }
-
-    [data-room="US03"] .workload-fill {
-      background-color: #ff5892 !important;
-    }
-
-    /* CT */
-    [data-room="CT"] .workload-bar {
-      background-color: #d7ebdf !important;
-    }
-
-    [data-room="CT"] .workload-fill {
-      background-color: #399d60 !important;
-    }
-
-    /* X-Ray */
-    [data-room="X-Ray"] .workload-bar {
-      background-color: #d7daf2 !important;
-    }
-
-    [data-room="X-Ray"] .workload-fill {
-      background-color: #3847bc !important;
-    }
-
-    /* Remove old color classes */
-    .workload-blue,
-    .workload-purple,
-    .workload-pink,
-    .workload-green {
-      background: transparent !important;
-    }
-
-      .section-title{
-        color: #393B3D;
-        font-weight: 700;
-        font-size: 21px;
-      }
-      
-      .workload-subtitle{
-        color: #393B3D;
-        font-weight: 400;
-        font-size: 14px;
-      }
-
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-        background: rgba(0, 0, 0, 0.3);
-      z-index: 2000;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-        
-    }
-
-    .modal.show {
-      display: flex;
-    }
-
-    .modal.active {
-      opacity: 1;
-    }
-
-    .modal-content {
-        background: #F5F7FA;
-      border-radius: 20px;
-      padding: 24px;
-        width: 370px;
-      max-width: 90%;
-      position: relative;
-      z-index: 2001;
-      transform: translateY(100vh);
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0px 4px 16px 0px #0000001F;
-        box-shadow: 0px 2px 3px 0px #0000000A;
-    }
-
-    .modal.active .modal-content {
-      transform: translateY(0);
-    }
-
-    /* Add button container styles */
-    .modal-buttons {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-        gap: 16px;
-        width: 100%;
-        height: 30px;
-        border-radius: 2px;
-        border-width: 1px;
-        padding: 1.5px;
-      gap: 16px;
-    }
-
-    .save-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        background: #206EEC;
-      color: white;
-      border: none;
-        padding: 4px 12px;
-      cursor: pointer;
-        font-weight: 400;
-      transition: background-color 0.2s;
-      font-size: 14px;
-        width: 76px;
-        height: 30px;
-        border-radius: 8px;
-    }
-
-    .save-btn:hover {
-      background: #2563eb;
-    }
-
-    .delete-btn {
-        background: #E6E8EB;
-        color: #F31700;
-        border: 1px solid #E6E8EB;
-        border-radius: 8px;
-        padding: 6px;
-      cursor: pointer;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-        justify-content: center;
-      transition: all 0.2s;
-      font-size: 14px;
-        width: 30px;
-        height: 30px;
-    }
-
-    .delete-icon {
-      font-size: 16px;
-    }
-
-    .modal.active .modal-content {
-      transform: translateY(0);
-    }
-
-    @media (max-width: 768px) {
-      .modal {
-        align-items: flex-end;
-      }
-
-      .modal-content {
-        width: 100%;
-        max-width: 100%;
-        margin: 0;
-        border-radius: 20px 20px 0 0;
-          border: 1px solid #00000014;
-        transform: translateY(100%);
-          transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          box-shadow: 0px 4px 16px 0px #0000001F;
-          box-shadow: 0px 2px 3px 0px #0000000A;
-
-      }
-
-      .modal.active .modal-content {
-        transform: translateY(0);
-      }
-    }
-
-    /* Add a visual indicator for dragging only on mobile */
-    @media (max-width: 768px) {
-      .modal-content::before {
-        content: "";
-        position: absolute;
-        top: 8px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 40px;
-        height: 4px;
-        background: #e5e7eb;
-        border-radius: 2px;
-      }
-
-      .modal-title {
-        margin-top: 8px;
-      }
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .modal-title {
-        font-size: 21px;
-        font-weight: 700;
-      margin-top: 8px;
-    }
-
-    .close-btn {
-      background: none;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      color: #6b7280;
-      padding: 4px;
-    }
-
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    .form-label {
-      display: block;
-      font-weight: 500;
-      margin-bottom: 8px;
-      color: #374151;
-    }
-
-    .form-select {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #d1d5db;
-      border-radius: 6px;
-      font-size: 14px;
-        background: transparent;
-      transition: all 0.2s ease;
-        border: none;
-        appearance: none;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-    }
-
-    .form-select.error {
-      border-color: #ef4444;
-      background-color: #fef2f2;
-    }
-
-    .form-group {
-      position: relative;
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        background: transparent;
-        border-radius: 10px;
-        padding: 0;
-        height: 42px;
-        border: 1px solid #00000014;
-      }
-
-      .form-group-icon {
-        width: 40px;
-        height: 40px;
-        padding: 0px 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-    }
-
-    .error-message {
-      color: #ef4444;
-      font-size: 12px;
-      margin-top: 4px;
-      display: none;
-      position: absolute;
-      bottom: -20px;
-      left: 0;
-    }
-
-    .form-group.error .error-message {
-      display: block;
-    }
-
-    .form-group.error .form-select {
-      border-color: #ef4444;
-      background-color: #fef2f2;
-    }
-
-    .form-row {
-      display: flex;
-      gap: 12px;
-        margin-bottom: 16px;
-    }
-
-    .form-row .form-group {
-      flex: 1;
-      margin-bottom: 0;
-    }
-
-    .form-select:focus {
-      outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    }
-
-      /* Hide images in options since they don't work in select elements */
-      .form-select option img {
-        display: none;
-    }
-
-    .form-select.error:focus {
-      border-color: #ef4444;
-      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
-    }
-
-    @media (max-width: 768px) {
-      .main-content {
-        flex-direction: column;
-        height: auto;
-        overflow: auto;
-      }
-
-      .sidebar {
-        width: 100%;
-        height: auto;
-        max-height: 500px;
-        border-left: none;
-        border-top: 1px solid #e5e7eb;
-        padding: 16px 0;
-      }
-
-      .schedule-section {
-        height: auto;
-        min-height: 500px;
-        padding: 16px 0;
-      }
-
-      .controls {
-        flex-wrap: wrap;
-        gap: 12px;
-      }
-    }
-
-    /* Drag and Drop Styles */
-    .dragging {
-      opacity: 0.5;
-      cursor: move;
-      position: relative;
-      z-index: 1000;
-      pointer-events: none;
-    }
-
-    .drag-over {
-      background-color: #eff6ff !important;
-      border: 2px dashed #2563eb !important;
-      position: relative;
-    }
-
-    .drag-over::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(37, 99, 235, 0.05);
-      pointer-events: none;
-    }
-
-    .shift-block {
-      cursor: grab;
-      user-select: none;
-        transition: all 0.2s ease;
-    }
-
-    .shift-block:active {
-      cursor: grabbing;
-    }
-
-      .shift-block.active {
-        color: white !important;
-      }
-
-      .shift-block.active[data-room="US01"] {
-        background-color: #0d8aea !important;
-      }
-
-      .shift-block.active[data-room="US02"] {
-        background-color: #ac58ff !important;
-      }
-
-      .shift-block.active[data-room="US03"] {
-        background-color: #ff5892 !important;
-      }
-
-      .shift-block.active[data-room="CT"] {
-        background-color: #399d60 !important;
-      }
-
-      .shift-block.active[data-room="X-Ray"] {
-        background-color: #3847bc !important;
-      }
-
-      .shift-block.active .shift-time,
-      .shift-block.active .shift-site {
-        color: white !important;
-    }
-
-    .day-cell {
-      transition: background-color 0.2s ease, border 0.2s ease;
-    }
-
-    .staff-row:hover .staff-info {
-      background: #f8fafc;
-    }
-
-    /* Removed shadow effects */
-    .shift-block.disabled {
-      opacity: 0.3;
-      pointer-events: none;
-      cursor: default;
-    }
-
-    /* Add styles for delete button */
-    .delete-btn {
-      position: absolute;
-      left: 24px;
-      bottom: 24px;
-    }
-
-    .delete-btn:hover {
-      color: #dc2626;
-    }
-
-    .delete-icon {
-      font-size: 20px;
-    }
-
-    /* Add styles for shift suggestions */
-    .shift-suggestions {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 20px;
-    }
-
-    .shift-suggestion-row {
-      display: flex;
-      gap: 8px;
-    }
-
-    .shift-suggestion {
-      flex: 1;
-      padding: 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      padding-left: 16px;
-      min-height: 48px;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .shift-suggestion::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 4px;
-    }
-
-    .shift-suggestion[data-room="US01"] {
-      background-color: #d2e2fb;
-      color: #0d8aea;
-    }
-
-    .shift-suggestion[data-room="US01"]::before {
-      background: #0d8aea;
-    }
-
-    .shift-suggestion[data-room="US02"] {
-      background-color: #eedeff;
-      color: #ac58ff;
-    }
-
-    .shift-suggestion[data-room="US02"]::before {
-      background: #ac58ff;
-    }
-
-    .shift-suggestion[data-room="US03"] {
-      background-color: #ffdee9;
-      color: #ff5892;
-    }
-
-    .shift-suggestion[data-room="US03"]::before {
-      background: #ff5892;
-    }
-
-    .shift-suggestion-title {
-      font-size: 13px;
-      font-weight: 400;
-    }
-
-    .shift-suggestion-time {
-      font-size: 11px;
-      font-weight: 400;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="main-content">
-    <div class="schedule-section">
-      <div class="schedule-wrapper">
-        <div class="controls">
-          <div class="controls-left">
-            <div class="date-range">2-8 Dec 2024</div>
-            <div class="date-nav">
-              <button class="nav-arrow">
+    <link rel="stylesheet" href="assets/css/employee.css" type="text/css" />
+  </head>
+
+  <body>
+    <div class="main-content">
+      <div class="schedule-section">
+        <div class="schedule-wrapper">
+          <div class="controls">
+            <div class="controls-left">
+              <div class="date-range">2-8 Dec 2024</div>
+              <div class="date-nav">
+                <button class="nav-arrow">
                   <img
                     src="./assets/left-arrow-black.png"
                     alt="arrow-left"
                     width="6px"
                     height="10px"
                   />
-              </button>
-              <button class="today-btn">Today</button>
-              <button class="nav-arrow">
+                </button>
+                <button class="today-btn">Today</button>
+                <button class="nav-arrow">
                   <img
                     src="./assets/right-arrow-black.png"
                     alt="arrow-right"
                     width="6px"
                     height="10px"
                   />
-              </button>
+                </button>
+              </div>
             </div>
-          </div>
-          <div class="controls-right">
-            <div class="filter-dropdown" id="siteFilter">
-              <div class="selected-text">All sites</div>
+            <div class="controls-right">
+              <div class="filter-dropdown" id="siteFilter">
+                <div class="selected-text">All sites</div>
                 <span class="dropdown-arrow"
                   ><img
                     src="./assets/dropdown-arrow.svg"
@@ -1249,20 +50,20 @@
                     width="10px"
                     height="6px"
                 /></span>
-              <div class="dropdown-content">
-                <label class="dropdown-item">
-                  <input type="checkbox" value="all" checked /> All sites
-                </label>
-                <label class="dropdown-item">
-                  <input type="checkbox" value="edmondson" /> Edmondson Park
-                </label>
-                <label class="dropdown-item">
-                  <input type="checkbox" value="ingleburn" /> Ingleburn
-                </label>
+                <div class="dropdown-content">
+                  <label class="dropdown-item">
+                    <input type="checkbox" value="all" checked /> All sites
+                  </label>
+                  <label class="dropdown-item">
+                    <input type="checkbox" value="edmondson" /> Edmondson Park
+                  </label>
+                  <label class="dropdown-item">
+                    <input type="checkbox" value="ingleburn" /> Ingleburn
+                  </label>
+                </div>
               </div>
-            </div>
-            <div class="filter-dropdown" id="employeeFilter">
-              <div class="selected-text">All employee types</div>
+              <div class="filter-dropdown" id="employeeFilter">
+                <div class="selected-text">All employee types</div>
                 <span class="dropdown-arrow"
                   ><img
                     src="./assets/dropdown-arrow.svg"
@@ -1270,343 +71,343 @@
                     width="10px"
                     height="6px"
                 /></span>
-              <div class="dropdown-content">
-                <label class="dropdown-item">
-                  <input type="checkbox" value="all" checked /> All employee
-                  types
-                </label>
-                <label class="dropdown-item">
-                  <input type="checkbox" value="technologist" /> Technologist
-                </label>
-                <label class="dropdown-item">
-                  <input type="checkbox" value="radiologist" /> Radiologist
-                </label>
-                <label class="dropdown-item">
-                  <input type="checkbox" value="other" /> Other
-                </label>
+                <div class="dropdown-content">
+                  <label class="dropdown-item">
+                    <input type="checkbox" value="all" checked /> All employee
+                    types
+                  </label>
+                  <label class="dropdown-item">
+                    <input type="checkbox" value="technologist" /> Technologist
+                  </label>
+                  <label class="dropdown-item">
+                    <input type="checkbox" value="radiologist" /> Radiologist
+                  </label>
+                  <label class="dropdown-item">
+                    <input type="checkbox" value="other" /> Other
+                  </label>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="schedule-container">
-          <div class="schedule-grid">
-            <div class="grid-header">
+          <div class="schedule-container">
+            <div class="schedule-grid">
+              <div class="grid-header">
                 <div class="header-cell header-cell-name">Name</div>
-              <div class="header-cell">
-                <div class="day-header">
-                  <div class="day-name">Mon</div>
-                  <div class="day-number">2</div>
+                <div class="header-cell">
+                  <div class="day-header">
+                    <div class="day-name">Mon</div>
+                    <div class="day-number">2</div>
+                  </div>
+                </div>
+                <div class="header-cell">
+                  <div class="day-header">
+                    <div class="day-name">Tue</div>
+                    <div class="day-number">3</div>
+                  </div>
+                </div>
+                <div class="header-cell">
+                  <div class="day-header">
+                    <div class="day-name">Wed</div>
+                    <div class="day-number">4</div>
+                  </div>
+                </div>
+                <div class="header-cell">
+                  <div class="day-header">
+                    <div class="day-name">Thu</div>
+                    <div class="day-number">5</div>
+                  </div>
+                </div>
+                <div class="header-cell">
+                  <div class="day-header">
+                    <div class="day-name">Fri</div>
+                    <div class="day-number">6</div>
+                  </div>
+                </div>
+                <div class="header-cell">
+                  <div class="day-header">
+                    <div class="day-name">Sat</div>
+                    <div class="day-number">7</div>
+                  </div>
+                </div>
+                <div class="header-cell">
+                  <div class="day-header">
+                    <div class="day-name">Sun</div>
+                    <div class="day-number">8</div>
+                  </div>
                 </div>
               </div>
-              <div class="header-cell">
-                <div class="day-header">
-                  <div class="day-name">Tue</div>
-                  <div class="day-number">3</div>
-                </div>
-              </div>
-              <div class="header-cell">
-                <div class="day-header">
-                  <div class="day-name">Wed</div>
-                  <div class="day-number">4</div>
-                </div>
-              </div>
-              <div class="header-cell">
-                <div class="day-header">
-                  <div class="day-name">Thu</div>
-                  <div class="day-number">5</div>
-                </div>
-              </div>
-              <div class="header-cell">
-                <div class="day-header">
-                  <div class="day-name">Fri</div>
-                  <div class="day-number">6</div>
-                </div>
-              </div>
-              <div class="header-cell">
-                <div class="day-header">
-                  <div class="day-name">Sat</div>
-                  <div class="day-number">7</div>
-                </div>
-              </div>
-              <div class="header-cell">
-                <div class="day-header">
-                  <div class="day-name">Sun</div>
-                  <div class="day-number">8</div>
-                </div>
-              </div>
-            </div>
 
-            <div class="staff-row" data-employee-type="technologist">
-              <div class="staff-info">
-                <div class="staff-name">Greg Lane</div>
-                <div class="staff-hours">21h 30 min</div>
+              <div class="staff-row" data-employee-type="technologist">
+                <div class="staff-info">
+                  <div class="staff-name">Greg Lane</div>
+                  <div class="staff-hours">21h 30 min</div>
+                </div>
+                <div class="day-cell">
+                  <div class="shift-block" data-room="US01">
+                    Edmondson Park | US01<br />8:00 am - 11:00 am
+                  </div>
+                </div>
+                <div class="day-cell">
+                  <div class="shift-block" data-room="US02">
+                    Edmondson Park | US02<br />8:00 am - 11:00 am
+                  </div>
+                  <div class="shift-block" data-room="US03">
+                    Edmondson Park | US03<br />1:00 pm - 5:00 pm
+                  </div>
+                </div>
+                <div class="day-cell">
+                  <div class="shift-block" data-room="CT">
+                    Edmondson Park | CT<br />8:00 am - 2:00 pm
+                  </div>
+                </div>
+                <div class="day-cell">
+                  <div class="shift-block" data-room="X-Ray">
+                    Ingleburn | X-Ray<br />8:00 am - 11:00 am
+                  </div>
+                  <div class="shift-block" data-room="US01">
+                    Edmondson Park | US01<br />8:00 am - 11:00 am
+                  </div>
+                  <div class="shift-block" data-room="US02">
+                    Edmondson Park | US02<br />8:00 am - 11:00 am
+                  </div>
+                  <div class="shift-block" data-room="US03">
+                    Edmondson Park | US03<br />8:00 am - 11:00 am
+                  </div>
+                </div>
+                <div class="day-cell">
+                  <div class="add-shift-btn">+</div>
+                </div>
+                <div class="day-cell"></div>
               </div>
-              <div class="day-cell">
-                <div class="shift-block" data-room="US01">
-                  Edmondson Park | US01<br />8:00 am - 11:00 am
-                </div>
-              </div>
-              <div class="day-cell">
-                <div class="shift-block" data-room="US02">
-                  Edmondson Park | US02<br />8:00 am - 11:00 am
-                </div>
-                <div class="shift-block" data-room="US03">
-                  Edmondson Park | US03<br />1:00 pm - 5:00 pm
-                </div>
-              </div>
-              <div class="day-cell">
-                <div class="shift-block" data-room="CT">
-                  Edmondson Park | CT<br />8:00 am - 2:00 pm
-                </div>
-              </div>
-              <div class="day-cell">
-                <div class="shift-block" data-room="X-Ray">
-                  Ingleburn | X-Ray<br />8:00 am - 11:00 am
-                </div>
-                <div class="shift-block" data-room="US01">
-                  Edmondson Park | US01<br />8:00 am - 11:00 am
-                </div>
-                <div class="shift-block" data-room="US02">
-                  Edmondson Park | US02<br />8:00 am - 11:00 am
-                </div>
-                <div class="shift-block" data-room="US03">
-                  Edmondson Park | US03<br />8:00 am - 11:00 am
-                </div>
-              </div>
-              <div class="day-cell">
-                <div class="add-shift-btn">+</div>
-              </div>
-              <div class="day-cell"></div>
-            </div>
 
-            <div class="staff-row" data-employee-type="radiologist">
-              <div class="staff-info">
-                <div class="staff-name">Arlene Richards</div>
-                <div class="staff-hours">24h</div>
-              </div>
-              <div class="day-cell"></div>
-              <div class="day-cell">
-                <div class="shift-block shift-green">
-                  Site | Room<br />8:00 am - 11:00 am
+              <div class="staff-row" data-employee-type="radiologist">
+                <div class="staff-info">
+                  <div class="staff-name">Arlene Richards</div>
+                  <div class="staff-hours">24h</div>
                 </div>
-              </div>
-              <div class="day-cell">
-                <div class="shift-block shift-green">
-                  Site | Room<br />8:00 am - 11:00 am
+                <div class="day-cell"></div>
+                <div class="day-cell">
+                  <div class="shift-block shift-green">
+                    Site | Room<br />8:00 am - 11:00 am
+                  </div>
                 </div>
+                <div class="day-cell">
+                  <div class="shift-block shift-green">
+                    Site | Room<br />8:00 am - 11:00 am
+                  </div>
+                </div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
               </div>
-              <div class="day-cell"></div>
-              <div class="day-cell"></div>
-              <div class="day-cell"></div>
-              <div class="day-cell"></div>
-            </div>
 
-            <div class="staff-row" data-employee-type="technologist">
-              <div class="staff-info">
-                <div class="staff-name">Cameron Edwards</div>
-                <div class="staff-hours">6h</div>
-              </div>
-              <div class="day-cell"></div>
-              <div class="day-cell">
-                <div class="shift-block shift-purple">
-                  Site | Room<br />8:00 am - 11:00 am
+              <div class="staff-row" data-employee-type="technologist">
+                <div class="staff-info">
+                  <div class="staff-name">Cameron Edwards</div>
+                  <div class="staff-hours">6h</div>
                 </div>
-              </div>
-              <div class="day-cell"></div>
-              <div class="day-cell">
-                <div class="shift-block shift-purple">
-                  Site | Room<br />8:00 am - 11:00 am
+                <div class="day-cell"></div>
+                <div class="day-cell">
+                  <div class="shift-block shift-purple">
+                    Site | Room<br />8:00 am - 11:00 am
+                  </div>
                 </div>
+                <div class="day-cell"></div>
+                <div class="day-cell">
+                  <div class="shift-block shift-purple">
+                    Site | Room<br />8:00 am - 11:00 am
+                  </div>
+                </div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
               </div>
-              <div class="day-cell"></div>
-              <div class="day-cell"></div>
-              <div class="day-cell"></div>
-            </div>
 
-            <div class="staff-row" data-employee-type="radiologist">
-              <div class="staff-info">
-                <div class="staff-name">Marjorie Hawkins</div>
-                <div class="staff-hours">21h 30 min</div>
+              <div class="staff-row" data-employee-type="radiologist">
+                <div class="staff-info">
+                  <div class="staff-name">Marjorie Hawkins</div>
+                  <div class="staff-hours">21h 30 min</div>
+                </div>
+                <div class="day-cell">
+                  <div class="shift-block shift-site">
+                    Site | Room<br />8:00 am - 11:00 am
+                  </div>
+                </div>
+                <div class="day-cell">
+                  <div class="shift-block shift-site">
+                    Site | Room<br />8:00 am - 11:00 am
+                  </div>
+                  <div class="shift-block shift-purple">
+                    Site | Room<br />11:30 am - 5:00 pm
+                  </div>
+                </div>
+                <div class="day-cell">
+                  <div class="shift-block shift-site">
+                    Site | Room<br />8:00 am - 11:00 am
+                  </div>
+                </div>
+                <div class="day-cell">
+                  <div class="shift-block shift-purple">
+                    Site | Room<br />8:00 am - 11:00 am
+                  </div>
+                  <div class="shift-block shift-edmondson">
+                    Edmondson Park | US01<br />8:00 am - 11:00 am
+                  </div>
+                  <div class="shift-block shift-pink">
+                    Edmondson Park | US02<br />8:00 am - 11:00 am
+                  </div>
+                  <div class="shift-block shift-edmondson">
+                    Edmondson Park | US03<br />8:00 am - 11:00 am
+                  </div>
+                </div>
+                <div class="day-cell">
+                  <div class="shift-block shift-edmondson">
+                    Edmondson Park | US01<br />11:00 am - 17:00 pm
+                  </div>
+                  <div class="shift-block shift-green">
+                    Edmondson Park | US02<br />11:00 am - 17:00 pm
+                  </div>
+                  <div class="shift-block shift-edmondson">
+                    Edmondson Park | US03<br />11:00 am - 17:00 pm
+                  </div>
+                </div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
               </div>
-              <div class="day-cell">
-                <div class="shift-block shift-site">
-                  Site | Room<br />8:00 am - 11:00 am
-                </div>
-              </div>
-              <div class="day-cell">
-                <div class="shift-block shift-site">
-                  Site | Room<br />8:00 am - 11:00 am
-                </div>
-                <div class="shift-block shift-purple">
-                  Site | Room<br />11:30 am - 5:00 pm
-                </div>
-              </div>
-              <div class="day-cell">
-                <div class="shift-block shift-site">
-                  Site | Room<br />8:00 am - 11:00 am
-                </div>
-              </div>
-              <div class="day-cell">
-                <div class="shift-block shift-purple">
-                  Site | Room<br />8:00 am - 11:00 am
-                </div>
-                <div class="shift-block shift-edmondson">
-                  Edmondson Park | US01<br />8:00 am - 11:00 am
-                </div>
-                <div class="shift-block shift-pink">
-                  Edmondson Park | US02<br />8:00 am - 11:00 am
-                </div>
-                <div class="shift-block shift-edmondson">
-                  Edmondson Park | US03<br />8:00 am - 11:00 am
-                </div>
-              </div>
-              <div class="day-cell">
-                <div class="shift-block shift-edmondson">
-                  Edmondson Park | US01<br />11:00 am - 17:00 pm
-                </div>
-                <div class="shift-block shift-green">
-                  Edmondson Park | US02<br />11:00 am - 17:00 pm
-                </div>
-                <div class="shift-block shift-edmondson">
-                  Edmondson Park | US03<br />11:00 am - 17:00 pm
-                </div>
-              </div>
-              <div class="day-cell"></div>
-              <div class="day-cell"></div>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="sidebar">
-      <div class="workload-section">
-        <div class="workload-header-section">
-          <div class="section-title">Edmondson Park</div>
-        </div>
+      <div class="sidebar">
+        <div class="workload-section">
+          <div class="workload-header-section">
+            <div class="section-title">Edmondson Park</div>
+          </div>
 
-        <div class="workload-item total-workload">
-          <div class="workload-header">
+          <div class="workload-item total-workload">
+            <div class="workload-header">
+              <div class="workload-hours-container">
+                <span class="workload-hours">16h</span>
+                <span class="workload-total">/ 20h</span>
+              </div>
+            </div>
+            <div class="workload-total-bar">
+              <div class="workload-total-fill" style="width: 80%"></div>
+            </div>
+          </div>
+
+          <div class="workload-item">
+            <div class="workload-header">
+              <div class="workload-room">US 02</div>
+            </div>
             <div class="workload-hours-container">
-              <span class="workload-hours">16h</span>
-              <span class="workload-total">/ 20h</span>
+              <span class="workload-hours">6h</span>
+              <span class="workload-total">/ 40h</span>
+            </div>
+            <div class="workload-bar">
+              <div class="workload-fill" style="width: 15%"></div>
             </div>
           </div>
-          <div class="workload-total-bar">
-            <div class="workload-total-fill" style="width: 80%"></div>
-          </div>
-        </div>
 
-        <div class="workload-item">
-          <div class="workload-header">
-            <div class="workload-room">US 02</div>
-          </div>
-          <div class="workload-hours-container">
-            <span class="workload-hours">6h</span>
-            <span class="workload-total">/ 40h</span>
-          </div>
-          <div class="workload-bar">
-            <div class="workload-fill" style="width: 15%"></div>
-          </div>
-        </div>
-
-        <div class="workload-item">
-          <div class="workload-header">
-            <div class="workload-room">US 03</div>
-          </div>
-          <div class="workload-hours-container">
-            <span class="workload-hours">30h</span>
-            <span class="workload-total">/ 40h</span>
-          </div>
-          <div class="workload-bar">
-            <div class="workload-fill" style="width: 75%"></div>
-          </div>
-        </div>
-
-        <div class="workload-item">
-          <div class="workload-header">
-            <div class="workload-room">CT</div>
-          </div>
-          <div class="workload-hours-container">
-            <span class="workload-hours">14h 30 min</span>
-            <span class="workload-total">/ 40h</span>
-          </div>
-          <div class="workload-bar">
-            <div class="workload-fill" style="width: 35%"></div>
-          </div>
-        </div>
-
-        <div class="workload-item">
-          <div class="workload-header">
-            <div class="workload-room">X-Ray</div>
-          </div>
-          <div class="workload-hours-container">
-            <span class="workload-hours">40h</span>
-            <span class="workload-total">/ 40h</span>
-          </div>
-          <div class="workload-bar">
-            <div class="workload-fill" style="width: 100%"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="workload-section">
-        <div class="workload-header-section">
-          <div class="section-title">Ingleburn</div>
-          <div class="workload-subtitle">Site Workload</div>
-        </div>
-
-        <div class="workload-item total-workload">
-          <div class="workload-header">
+          <div class="workload-item">
+            <div class="workload-header">
+              <div class="workload-room">US 03</div>
+            </div>
             <div class="workload-hours-container">
               <span class="workload-hours">30h</span>
               <span class="workload-total">/ 40h</span>
             </div>
+            <div class="workload-bar">
+              <div class="workload-fill" style="width: 75%"></div>
+            </div>
           </div>
-          <div class="workload-total-bar">
-            <div class="workload-total-fill" style="width: 75%"></div>
+
+          <div class="workload-item">
+            <div class="workload-header">
+              <div class="workload-room">CT</div>
+            </div>
+            <div class="workload-hours-container">
+              <span class="workload-hours">14h 30 min</span>
+              <span class="workload-total">/ 40h</span>
+            </div>
+            <div class="workload-bar">
+              <div class="workload-fill" style="width: 35%"></div>
+            </div>
+          </div>
+
+          <div class="workload-item">
+            <div class="workload-header">
+              <div class="workload-room">X-Ray</div>
+            </div>
+            <div class="workload-hours-container">
+              <span class="workload-hours">40h</span>
+              <span class="workload-total">/ 40h</span>
+            </div>
+            <div class="workload-bar">
+              <div class="workload-fill" style="width: 100%"></div>
+            </div>
           </div>
         </div>
 
-        <div class="workload-item">
-          <div class="workload-header">
-            <div class="workload-room">US 02</div>
+        <div class="workload-section">
+          <div class="workload-header-section">
+            <div class="section-title">Ingleburn</div>
+            <div class="workload-subtitle">Site Workload</div>
           </div>
-          <div class="workload-hours-container">
-            <span class="workload-hours">6h</span>
-            <span class="workload-total">/ 40h</span>
-          </div>
-          <div class="workload-bar">
-            <div class="workload-fill" style="width: 15%"></div>
-          </div>
-        </div>
 
-        <div class="workload-item">
-          <div class="workload-header">
-            <div class="workload-room">US 03</div>
+          <div class="workload-item total-workload">
+            <div class="workload-header">
+              <div class="workload-hours-container">
+                <span class="workload-hours">30h</span>
+                <span class="workload-total">/ 40h</span>
+              </div>
+            </div>
+            <div class="workload-total-bar">
+              <div class="workload-total-fill" style="width: 75%"></div>
+            </div>
           </div>
-          <div class="workload-hours-container">
-            <span class="workload-hours">30h</span>
-            <span class="workload-total">/ 40h</span>
+
+          <div class="workload-item">
+            <div class="workload-header">
+              <div class="workload-room">US 02</div>
+            </div>
+            <div class="workload-hours-container">
+              <span class="workload-hours">6h</span>
+              <span class="workload-total">/ 40h</span>
+            </div>
+            <div class="workload-bar">
+              <div class="workload-fill" style="width: 15%"></div>
+            </div>
           </div>
-          <div class="workload-bar">
-            <div class="workload-fill" style="width: 75%"></div>
+
+          <div class="workload-item">
+            <div class="workload-header">
+              <div class="workload-room">US 03</div>
+            </div>
+            <div class="workload-hours-container">
+              <span class="workload-hours">30h</span>
+              <span class="workload-total">/ 40h</span>
+            </div>
+            <div class="workload-bar">
+              <div class="workload-fill" style="width: 75%"></div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Modal for adding shifts -->
-  <div class="modal" id="addShiftModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div class="modal-title">Add working hours</div>
-        <button class="close-btn" onclick="closeModal()">&times;</button>
-      </div>
-      <form id="shiftForm" onsubmit="addShift(event); return false;">
-        <div class="form-group">
+    <!-- Modal for adding shifts -->
+    <div class="modal" id="addShiftModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-title">Add working hours</div>
+          <button class="close-btn" onclick="closeModal()">&times;</button>
+        </div>
+        <form id="shiftForm" onsubmit="addShift(event); return false;">
+          <div class="form-group">
             <div class="form-group-icon">
               <img
                 src="./assets/employee.svg"
@@ -1616,195 +417,222 @@
               />
             </div>
             <div style="border-left: 1px solid #e0e0e0; height: 16px"></div>
-          <select class="form-select" id="staffSelect" required>
-            <option value="">Select Staff Member</option>
-            <option value="Greg Lane">Greg Lane</option>
-            <option value="Arlene Richards">Arlene Richards</option>
-            <option value="Cameron Edwards">Cameron Edwards</option>
-            <option value="Marjorie Hawkins">Marjorie Hawkins</option>
-            <option value="Sarah Chen">Sarah Chen</option>
-            <option value="Michael Torres">Michael Torres</option>
-            <option value="Emily Parker">Emily Parker</option>
-            <option value="David Wong">David Wong</option>
-            <option value="Rachel Martinez">Rachel Martinez</option>
-            <option value="James Wilson">James Wilson</option>
-            <option value="Lisa Thompson">Lisa Thompson</option>
-            <option value="Robert Kim">Robert Kim</option>
-            <option value="Amanda Foster">Amanda Foster</option>
-            <option value="Daniel Lee">Daniel Lee</option>
-            <option value="Sophie Anderson">Sophie Anderson</option>
-          </select>
+            <select class="form-select" id="staffSelect" required>
+              <option value="">Select Staff Member</option>
+              <option value="Greg Lane">Greg Lane</option>
+              <option value="Arlene Richards">Arlene Richards</option>
+              <option value="Cameron Edwards">Cameron Edwards</option>
+              <option value="Marjorie Hawkins">Marjorie Hawkins</option>
+              <option value="Sarah Chen">Sarah Chen</option>
+              <option value="Michael Torres">Michael Torres</option>
+              <option value="Emily Parker">Emily Parker</option>
+            </select>
             <div class="dropdown-arrow-modal">
-              <img src="./assets/dropdown-arrow.svg" alt="dropdown-arrow" width="10px" height="6px"/>
+              <img
+                src="./assets/dropdown-arrow.svg"
+                alt="dropdown-arrow"
+                width="10px"
+                height="6px"
+              />
             </div>
-          <div class="error-message">Please select a staff member</div>
-        </div>
+            <div class="error-message">Please select a staff member</div>
+          </div>
 
-        <div class="shift-suggestions">
-          <div class="shift-suggestion-row">
+          <div class="shift-suggestions">
+            <div class="shift-suggestion-row">
               <div
                 class="shift-suggestion"
                 data-room="US01"
-                onclick="fillShiftDetails('Edmondson Park', 'US01', '08:00', '11:00')"
+                onclick="fillShiftDetails(event, 'Edmondson Park', 'US01', '08:00', '11:00')"
               >
-              <div class="shift-suggestion-title">Edmondson Park | US01</div>
-              <div class="shift-suggestion-time">08:00 - 11:00</div>
-            </div>
+                <div class="shift-suggestion-title">Edmondson Park | US01</div>
+                <div class="shift-suggestion-time">08:00 - 11:00</div>
+              </div>
               <div
                 class="shift-suggestion"
                 data-room="US01"
-                onclick="fillShiftDetails('Edmondson Park', 'US01', '11:00', '17:00')"
+                onclick="fillShiftDetails(event, 'Edmondson Park', 'US01', '11:00', '17:00')"
               >
-              <div class="shift-suggestion-title">Edmondson Park | US01</div>
-              <div class="shift-suggestion-time">11:00 - 17:00</div>
+                <div class="shift-suggestion-title">Edmondson Park | US01</div>
+                <div class="shift-suggestion-time">11:00 - 17:00</div>
+              </div>
             </div>
-          </div>
-          <div class="shift-suggestion-row">
+            <div class="shift-suggestion-row">
               <div
                 class="shift-suggestion"
                 data-room="US02"
-                onclick="fillShiftDetails('Edmondson Park', 'US02', '08:00', '11:00')"
+                onclick="fillShiftDetails(event, 'Edmondson Park', 'US02', '08:00', '11:00')"
               >
-              <div class="shift-suggestion-title">Edmondson Park | US02</div>
-              <div class="shift-suggestion-time">08:00 - 11:00</div>
-            </div>
+                <div class="shift-suggestion-title">Edmondson Park | US02</div>
+                <div class="shift-suggestion-time">08:00 - 11:00</div>
+              </div>
               <div
                 class="shift-suggestion"
                 data-room="US02"
-                onclick="fillShiftDetails('Edmondson Park', 'US02', '11:00', '17:00')"
+                onclick="fillShiftDetails(event, 'Edmondson Park', 'US02', '11:00', '17:00')"
               >
-              <div class="shift-suggestion-title">Edmondson Park | US02</div>
-              <div class="shift-suggestion-time">11:00 - 17:00</div>
+                <div class="shift-suggestion-title">Edmondson Park | US02</div>
+                <div class="shift-suggestion-time">11:00 - 17:00</div>
+              </div>
             </div>
-          </div>
-          <div class="shift-suggestion-row">
+            <div class="shift-suggestion-row">
               <div
                 class="shift-suggestion"
                 data-room="US03"
-                onclick="fillShiftDetails('Edmondson Park', 'US03', '08:00', '11:00')"
+                onclick="fillShiftDetails(event, 'Edmondson Park', 'US03', '08:00', '11:00')"
               >
-              <div class="shift-suggestion-title">Edmondson Park | US03</div>
-              <div class="shift-suggestion-time">08:00 - 11:00</div>
-            </div>
+                <div class="shift-suggestion-title">Edmondson Park | US03</div>
+                <div class="shift-suggestion-time">08:00 - 11:00</div>
+              </div>
               <div
                 class="shift-suggestion"
                 data-room="US03"
-                onclick="fillShiftDetails('Edmondson Park', 'US03', '11:00', '17:00')"
+                onclick="fillShiftDetails(event, 'Edmondson Park', 'US03', '11:00', '17:00')"
               >
-              <div class="shift-suggestion-title">Edmondson Park | US03</div>
-              <div class="shift-suggestion-time">11:00 - 17:00</div>
+                <div class="shift-suggestion-title">Edmondson Park | US03</div>
+                <div class="shift-suggestion-time">11:00 - 17:00</div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="form-group">
-          <select class="form-select" id="siteSelect" required>
-            <option value="">Select Site</option>
-            <option value="Edmondson Park">Edmondson Park</option>
-            <option value="Ingleburn">Ingleburn</option>
-          </select>
-            <div class="dropdown-arrow-modal">
-              <img src="./assets/dropdown-arrow.svg" alt="dropdown-arrow" width="10px" height="6px"/>
-            </div>
-          <div class="error-message">Please select a site</div>
-        </div>
-
-        <div class="form-group">
-          <select class="form-select" id="roomSelect" required>
-            <option value="">Select Room</option>
-            <option value="US01">US01</option>
-            <option value="US02">US02</option>
-            <option value="US03">US03</option>
-            <option value="CT">CT</option>
-            <option value="X-Ray">X-Ray</option>
-          </select>
-            <div class="dropdown-arrow-modal">
-              <img src="./assets/dropdown-arrow.svg" alt="dropdown-arrow" width="10px" height="6px"/>
-            </div>
-          <div class="error-message">Please select a room</div>
-        </div>
-
-        <div class="form-row">
           <div class="form-group">
-            <select class="form-select" id="fromTime" required>
-              <option value="">Start Time</option>
-              <option value="08:00">08:00</option>
+            <select class="form-select" id="siteSelect" required>
+              <option value="">Select Site</option>
+              <option value="Edmondson Park">Edmondson Park</option>
+              <option value="Ingleburn">Ingleburn</option>
+            </select>
+            <div class="dropdown-arrow-modal">
+              <img
+                src="./assets/dropdown-arrow.svg"
+                alt="dropdown-arrow"
+                width="10px"
+                height="6px"
+              />
+            </div>
+            <div class="error-message">Please select a site</div>
+          </div>
+
+          <div class="form-group">
+            <select class="form-select" id="roomSelect" required>
+              <option value="">Select Room</option>
+              <option value="US01">US01</option>
+              <option value="US02">US02</option>
+              <option value="US03">US03</option>
+              <option value="CT">CT</option>
+              <option value="X-Ray">X-Ray</option>
+            </select>
+            <div class="dropdown-arrow-modal">
+              <img
+                src="./assets/dropdown-arrow.svg"
+                alt="dropdown-arrow"
+                width="10px"
+                height="6px"
+              />
+            </div>
+            <div class="error-message">Please select a room</div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <select class="form-select" id="fromTime" required>
+                <option value="">Start Time</option>
+                <option value="08:00">08:00</option>
                 <option value="08:30">08:30</option>
-              <option value="09:00">09:00</option>
+                <option value="09:00">09:00</option>
                 <option value="09:30">09:30</option>
-              <option value="10:00">10:00</option>
+                <option value="10:00">10:00</option>
                 <option value="10:30">10:30</option>
-              <option value="11:00">11:00</option>
+                <option value="11:00">11:00</option>
                 <option value="11:30">11:30</option>
-              <option value="12:00">12:00</option>
+                <option value="12:00">12:00</option>
                 <option value="12:30">12:30</option>
-              <option value="13:00">13:00</option>
+                <option value="13:00">13:00</option>
                 <option value="13:30">13:30</option>
-              <option value="14:00">14:00</option>
+                <option value="14:00">14:00</option>
                 <option value="14:30">14:30</option>
-              <option value="15:00">15:00</option>
+                <option value="15:00">15:00</option>
                 <option value="15:30">15:30</option>
-              <option value="16:00">16:00</option>
+                <option value="16:00">16:00</option>
                 <option value="16:30">16:30</option>
-              <option value="17:00">17:00</option>
+                <option value="17:00">17:00</option>
                 <option value="17:30">17:30</option>
-            </select>
+              </select>
               <div class="dropdown-arrow-modal">
-                <img src="./assets/dropdown-arrow.svg" alt="dropdown-arrow" width="10px" height="6px"/>
+                <img
+                  src="./assets/dropdown-arrow.svg"
+                  alt="dropdown-arrow"
+                  width="10px"
+                  height="6px"
+                />
               </div>
-            <div class="error-message">Please select start time</div>
-          </div>
-          <div class="form-group">
-            <select class="form-select" id="toTime" required>
-              <option value="">End Time</option>
-              <option value="11:00">11:00</option>
+              <div class="error-message">Please select start time</div>
+            </div>
+            <div class="form-group">
+              <select class="form-select" id="toTime" required>
+                <option value="">End Time</option>
+                <option value="11:00">11:00</option>
                 <option value="11:30">11:30</option>
-              <option value="12:00">12:00</option>
+                <option value="12:00">12:00</option>
                 <option value="12:30">12:30</option>
-              <option value="13:00">13:00</option>
+                <option value="13:00">13:00</option>
                 <option value="13:30">13:30</option>
-              <option value="14:00">14:00</option>
+                <option value="14:00">14:00</option>
                 <option value="14:30">14:30</option>
-              <option value="15:00">15:00</option>
+                <option value="15:00">15:00</option>
                 <option value="15:30">15:30</option>
-              <option value="16:00">16:00</option>
+                <option value="16:00">16:00</option>
                 <option value="16:30">16:30</option>
-              <option value="17:00">17:00</option>
+                <option value="17:00">17:00</option>
                 <option value="17:30">17:30</option>
-              <option value="18:00">18:00</option>
+                <option value="18:00">18:00</option>
                 <option value="18:30">18:30</option>
-              <option value="19:00">19:00</option>
+                <option value="19:00">19:00</option>
                 <option value="19:30">19:30</option>
-              <option value="20:00">20:00</option>
+                <option value="20:00">20:00</option>
                 <option value="20:30">20:30</option>
-            </select>
+              </select>
               <div class="dropdown-arrow-modal">
-                <img src="./assets/dropdown-arrow.svg" alt="dropdown-arrow" width="10px" height="6px"/>
+                <img
+                  src="./assets/dropdown-arrow.svg"
+                  alt="dropdown-arrow"
+                  width="10px"
+                  height="6px"
+                />
               </div>
-            <div class="error-message">Please select end time</div>
+              <div class="error-message">Please select end time</div>
+            </div>
           </div>
-        </div>
 
           <div class="modal-buttons">
-          <button type="submit" class="save-btn"><img src="./assets/right.svg" alt="save" width="12" height="14" style="width: 14;
-            height: 10.415624618530273;
-            top: 2.58px;
-            left: 1px;
-            "> Save</button>
+            <button type="submit" class="save-btn">
+              <img
+                src="./assets/right.svg"
+                alt="save"
+                width="12"
+                height="14"
+                style="
+                  width: 14;
+                  height: 10.415624618530273;
+                  top: 2.58px;
+                  left: 1px;
+                "
+              />
+              Save
+            </button>
           </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal for editing shifts -->
-  <div class="modal" id="editShiftModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div class="modal-title">Edit working hours</div>
-        <button class="close-btn" onclick="closeEditModal()">&times;</button>
+        </form>
       </div>
-      <form id="editShiftForm">
-        <div class="form-group">
+    </div>
+
+    <!-- Modal for editing shifts -->
+    <div class="modal" id="editShiftModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-title">Edit working hours</div>
+          <button class="close-btn" onclick="closeEditModal()">&times;</button>
+        </div>
+        <form id="editShiftForm">
+          <div class="form-group">
             <div class="form-group-icon">
               <img
                 src="./assets/employee.svg"
@@ -1814,7 +642,7 @@
               />
             </div>
             <div style="border-left: 1px solid #e0e0e0; height: 16px"></div>
-          <select class="form-select" id="editStaffSelect">
+            <select class="form-select" id="editStaffSelect">
               <option value="">
                 <img
                   src="./assets/employee.svg"
@@ -1824,2587 +652,203 @@
                 />
                 Select Staff Member
               </option>
-            <option value="Greg Lane">Greg Lane</option>
-            <option value="Arlene Richards">Arlene Richards</option>
-            <option value="Cameron Edwards">Cameron Edwards</option>
-            <option value="Marjorie Hawkins">Marjorie Hawkins</option>
-            <option value="Sarah Chen">Sarah Chen</option>
-            <option value="Michael Torres">Michael Torres</option>
-            <option value="Emily Parker">Emily Parker</option>
-            <option value="David Wong">David Wong</option>
-            <option value="Rachel Martinez">Rachel Martinez</option>
-            <option value="James Wilson">James Wilson</option>
-            <option value="Lisa Thompson">Lisa Thompson</option>
-            <option value="Robert Kim">Robert Kim</option>
-            <option value="Amanda Foster">Amanda Foster</option>
-            <option value="Daniel Lee">Daniel Lee</option>
-            <option value="Sophie Anderson">Sophie Anderson</option>
-          </select>
+              <option value="Greg Lane">Greg Lane</option>
+              <option value="Arlene Richards">Arlene Richards</option>
+              <option value="Cameron Edwards">Cameron Edwards</option>
+              <option value="Marjorie Hawkins">Marjorie Hawkins</option>
+              <option value="Sarah Chen">Sarah Chen</option>
+              <option value="Michael Torres">Michael Torres</option>
+              <option value="Emily Parker">Emily Parker</option>
+              <option value="David Wong">David Wong</option>
+              <option value="Rachel Martinez">Rachel Martinez</option>
+              <option value="James Wilson">James Wilson</option>
+              <option value="Lisa Thompson">Lisa Thompson</option>
+              <option value="Robert Kim">Robert Kim</option>
+              <option value="Amanda Foster">Amanda Foster</option>
+              <option value="Daniel Lee">Daniel Lee</option>
+              <option value="Sophie Anderson">Sophie Anderson</option>
+            </select>
             <div class="dropdown-arrow-modal">
-              <img src="./assets/dropdown-arrow.svg" alt="dropdown-arrow" width="10px" height="6px"/>
+              <img
+                src="./assets/dropdown-arrow.svg"
+                alt="dropdown-arrow"
+                width="10px"
+                height="6px"
+              />
             </div>
-        </div>
+          </div>
 
-        <div class="shift-suggestions">
-          <div class="shift-suggestion-row">
+          <div class="shift-suggestions">
+            <div class="shift-suggestion-row">
               <div
                 class="shift-suggestion"
                 data-room="US01"
-                onclick="fillEditShiftDetails('Edmondson Park', 'US01', '08:00', '11:00')"
+                onclick="fillEditShiftDetails(event, 'Edmondson Park', 'US01', '08:00', '11:00')"
               >
-              <div class="shift-suggestion-title">Edmondson Park | US01</div>
-              <div class="shift-suggestion-time">08:00 - 11:00</div>
-            </div>
+                <div class="shift-suggestion-title">Edmondson Park | US01</div>
+                <div class="shift-suggestion-time">08:00 - 11:00</div>
+              </div>
               <div
                 class="shift-suggestion"
                 data-room="US01"
-                onclick="fillEditShiftDetails('Edmondson Park', 'US01', '11:00', '17:00')"
+                onclick="fillEditShiftDetails(event, 'Edmondson Park', 'US01', '11:00', '17:00')"
               >
-              <div class="shift-suggestion-title">Edmondson Park | US01</div>
-              <div class="shift-suggestion-time">11:00 - 17:00</div>
+                <div class="shift-suggestion-title">Edmondson Park | US01</div>
+                <div class="shift-suggestion-time">11:00 - 17:00</div>
+              </div>
             </div>
-          </div>
-          <div class="shift-suggestion-row">
+            <div class="shift-suggestion-row">
               <div
                 class="shift-suggestion"
                 data-room="US02"
-                onclick="fillEditShiftDetails('Edmondson Park', 'US02', '08:00', '11:00')"
+                onclick="fillEditShiftDetails(event, 'Edmondson Park', 'US02', '08:00', '11:00')"
               >
-              <div class="shift-suggestion-title">Edmondson Park | US02</div>
-              <div class="shift-suggestion-time">08:00 - 11:00</div>
-            </div>
+                <div class="shift-suggestion-title">Edmondson Park | US02</div>
+                <div class="shift-suggestion-time">08:00 - 11:00</div>
+              </div>
               <div
                 class="shift-suggestion"
                 data-room="US02"
-                onclick="fillEditShiftDetails('Edmondson Park', 'US02', '11:00', '17:00')"
+                onclick="fillEditShiftDetails(event, 'Edmondson Park', 'US02', '11:00', '17:00')"
               >
-              <div class="shift-suggestion-title">Edmondson Park | US02</div>
-              <div class="shift-suggestion-time">11:00 - 17:00</div>
+                <div class="shift-suggestion-title">Edmondson Park | US02</div>
+                <div class="shift-suggestion-time">11:00 - 17:00</div>
+              </div>
             </div>
-          </div>
-          <div class="shift-suggestion-row">
+            <div class="shift-suggestion-row">
               <div
                 class="shift-suggestion"
                 data-room="US03"
-                onclick="fillEditShiftDetails('Edmondson Park', 'US03', '08:00', '11:00')"
+                onclick="fillEditShiftDetails(event, 'Edmondson Park', 'US03', '08:00', '11:00')"
               >
-              <div class="shift-suggestion-title">Edmondson Park | US03</div>
-              <div class="shift-suggestion-time">08:00 - 11:00</div>
-            </div>
+                <div class="shift-suggestion-title">Edmondson Park | US03</div>
+                <div class="shift-suggestion-time">08:00 - 11:00</div>
+              </div>
               <div
                 class="shift-suggestion"
                 data-room="US03"
-                onclick="fillEditShiftDetails('Edmondson Park', 'US03', '11:00', '17:00')"
+                onclick="fillEditShiftDetails(event, 'Edmondson Park', 'US03', '11:00', '17:00')"
               >
-              <div class="shift-suggestion-title">Edmondson Park | US03</div>
-              <div class="shift-suggestion-time">11:00 - 17:00</div>
+                <div class="shift-suggestion-title">Edmondson Park | US03</div>
+                <div class="shift-suggestion-time">11:00 - 17:00</div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="form-group">
-          <select class="form-select" id="editSiteSelect">
-            <option value="">Select Site</option>
-            <option value="Edmondson Park">Edmondson Park</option>
-            <option value="Ingleburn">Ingleburn</option>
-          </select>
-            <div class="dropdown-arrow-modal">
-              <img src="./assets/dropdown-arrow.svg" alt="dropdown-arrow" width="10px" height="6px"/>
-            </div>
-        </div>
-
-        <div class="form-group">
-          <select class="form-select" id="editRoomSelect">
-            <option value="">Select Room</option>
-            <option value="US01">US01</option>
-            <option value="US02">US02</option>
-            <option value="US03">US03</option>
-            <option value="CT">CT</option>
-            <option value="X-Ray">X-Ray</option>
-          </select>
-            <div class="dropdown-arrow-modal">
-              <img src="./assets/dropdown-arrow.svg" alt="dropdown-arrow" width="10px" height="6px"/>
-            </div>
-        </div>
-
-        <div class="form-row">
           <div class="form-group">
-            <select class="form-select" id="editFromTime">
+            <select class="form-select" id="editSiteSelect">
+              <option value="">Select Site</option>
+              <option value="Edmondson Park">Edmondson Park</option>
+              <option value="Ingleburn">Ingleburn</option>
+            </select>
+            <div class="dropdown-arrow-modal">
+              <img
+                src="./assets/dropdown-arrow.svg"
+                alt="dropdown-arrow"
+                width="10px"
+                height="6px"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <select class="form-select" id="editRoomSelect">
+              <option value="">Select Room</option>
+              <option value="US01">US01</option>
+              <option value="US02">US02</option>
+              <option value="US03">US03</option>
+              <option value="CT">CT</option>
+              <option value="X-Ray">X-Ray</option>
+            </select>
+            <div class="dropdown-arrow-modal">
+              <img
+                src="./assets/dropdown-arrow.svg"
+                alt="dropdown-arrow"
+                width="10px"
+                height="6px"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <select class="form-select" id="editFromTime">
                 <option value="">Start Time</option>
-              <option value="08:00">08:00</option>
-              <option value="09:00">09:00</option>
-              <option value="10:00">10:00</option>
-              <option value="11:00">11:00</option>
-              <option value="12:00">12:00</option>
-              <option value="13:00">13:00</option>
-              <option value="14:00">14:00</option>
-              <option value="15:00">15:00</option>
-              <option value="16:00">16:00</option>
-              <option value="17:00">17:00</option>
-            </select>
+                <option value="08:00">08:00</option>
+                <option value="09:00">09:00</option>
+                <option value="10:00">10:00</option>
+                <option value="11:00">11:00</option>
+                <option value="12:00">12:00</option>
+                <option value="13:00">13:00</option>
+                <option value="14:00">14:00</option>
+                <option value="15:00">15:00</option>
+                <option value="16:00">16:00</option>
+                <option value="17:00">17:00</option>
+              </select>
               <div class="dropdown-arrow-modal">
-                <img src="./assets/dropdown-arrow.svg" alt="dropdown-arrow" width="10px" height="6px"/>
+                <img
+                  src="./assets/dropdown-arrow.svg"
+                  alt="dropdown-arrow"
+                  width="10px"
+                  height="6px"
+                />
               </div>
-          </div>
-          <div class="form-group">
-            <select class="form-select" id="editToTime">
+            </div>
+            <div class="form-group">
+              <select class="form-select" id="editToTime">
                 <option value="">End Time</option>
-              <option value="11:00">11:00</option>
-              <option value="12:00">12:00</option>
-              <option value="13:00">13:00</option>
-              <option value="14:00">14:00</option>
-              <option value="15:00">15:00</option>
-              <option value="16:00">16:00</option>
-              <option value="17:00">17:00</option>
-              <option value="18:00">18:00</option>
-              <option value="19:00">19:00</option>
-              <option value="20:00">20:00</option>
-            </select>
+                <option value="11:00">11:00</option>
+                <option value="12:00">12:00</option>
+                <option value="13:00">13:00</option>
+                <option value="14:00">14:00</option>
+                <option value="15:00">15:00</option>
+                <option value="16:00">16:00</option>
+                <option value="17:00">17:00</option>
+                <option value="18:00">18:00</option>
+                <option value="19:00">19:00</option>
+                <option value="20:00">20:00</option>
+              </select>
               <div class="dropdown-arrow-modal">
-                <img src="./assets/dropdown-arrow.svg" alt="dropdown-arrow" width="10px" height="6px"/>
-              </div>
-          </div>
-        </div>
-
-        <div class="modal-buttons">
-          <button type="button" class="delete-btn" onclick="deleteShift()">
-              <span class="delete-icon"><img src="./assets/delete.svg" alt="delete" width="12" height="14"></span>
-          </button>
-            <button type="submit" class="save-btn"><img src="./assets/right.svg" alt="save" width="12" height="14" style="width: 14;
-              height: 10.415624618530273;
-              top: 2.58px;
-              left: 1px;
-              "> Save</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <script>
-    // Current date tracking
-      let currentDate = new Date(); // Start with today's date
-      // Set to Monday of current week
-      const day = currentDate.getDay();
-      const diff = currentDate.getDate() - day + (day === 0 ? -6 : 1);
-      currentDate.setDate(diff);
-
-    let draggedShift = null;
-
-    // Initialize the application
-    document.addEventListener("DOMContentLoaded", function () {
-      updateDateDisplay(); // Update date first
-      initializeDropdowns();
-      bindEventListeners();
-      renderStaffData(currentDate);
-      initializeShiftBlockHandlers(); // Add this line to ensure handlers are attached on initial load
-    });
-
-    // Dropdown functionality
-    function initializeDropdowns() {
-      const dropdowns = document.querySelectorAll(".filter-dropdown");
-
-      dropdowns.forEach((dropdown) => {
-        const selectedText = dropdown.querySelector(".selected-text");
-        const dropdownContent = dropdown.querySelector(".dropdown-content");
-        const arrow = dropdown.querySelector(".dropdown-arrow");
-        const checkboxes = dropdown.querySelectorAll(
-          'input[type="checkbox"]'
-        );
-        const allCheckbox = dropdown.querySelector('input[value="all"]');
-
-        // Toggle dropdown on click
-        dropdown.addEventListener("click", function (e) {
-          if (e.target.type !== "checkbox") {
-            e.stopPropagation();
-            dropdownContent.classList.toggle("show");
-            arrow.classList.toggle("open");
-
-            // Close other dropdowns
-            dropdowns.forEach((otherDropdown) => {
-              if (otherDropdown !== dropdown) {
-                const otherContent =
-                  otherDropdown.querySelector(".dropdown-content");
-                const otherArrow =
-                  otherDropdown.querySelector(".dropdown-arrow");
-                if (otherContent) otherContent.classList.remove("show");
-                if (otherArrow) otherArrow.classList.remove("open");
-              }
-            });
-          }
-        });
-
-        // Handle checkbox changes
-        checkboxes.forEach((checkbox) => {
-          checkbox.addEventListener("change", function (e) {
-            e.stopPropagation();
-
-            if (checkbox.value === "all") {
-              // When "All" is clicked, update other checkboxes
-              checkboxes.forEach((cb) => {
-                if (cb !== checkbox) {
-                  cb.checked = checkbox.checked;
-                }
-              });
-              // Update selected text to show "All sites" or "All types"
-              selectedText.textContent = checkbox.parentElement.textContent.trim();
-            } else {
-              // When individual option is clicked
-              const nonAllCheckboxes = Array.from(checkboxes).filter(
-                (cb) => cb.value !== "all"
-              );
-              const allChecked = nonAllCheckboxes.every((cb) => cb.checked);
-              const anyChecked = nonAllCheckboxes.some((cb) => cb.checked);
-
-              // Update "All" checkbox
-              if (allCheckbox) {
-                allCheckbox.checked = allChecked;
-              }
-
-              // Update selected text
-              if (allChecked) {
-                // If all individual options are checked, show "All sites" or "All types"
-                selectedText.textContent = allCheckbox.parentElement.textContent.trim();
-              } else if (!anyChecked) {
-                // If none are checked, default to "All sites" or "All types"
-                selectedText.textContent = allCheckbox.parentElement.textContent.trim();
-                allCheckbox.checked = true;
-                checkboxes.forEach((cb) => {
-                  cb.checked = true;
-                });
-              } else {
-                // Show selected items
-              const checkedItems = nonAllCheckboxes
-                .filter((cb) => cb.checked)
-                .map((cb) => cb.parentElement.textContent.trim());
-                selectedText.textContent = checkedItems.join(", ");
-              }
-            }
-
-            applyFilters();
-          });
-        });
-      });
-
-      // Close dropdowns when clicking outside
-      document.addEventListener("click", function (e) {
-        if (!e.target.closest(".filter-dropdown")) {
-          dropdowns.forEach((dropdown) => {
-            const content = dropdown.querySelector(".dropdown-content");
-            const arrow = dropdown.querySelector(".dropdown-arrow");
-            if (content) content.classList.remove("show");
-            if (arrow) arrow.classList.remove("open");
-          });
-        }
-      });
-    }
-
-    function applyFilters() {
-      const siteCheckboxes = document.querySelectorAll(
-        '#siteFilter input[type="checkbox"]:checked'
-      );
-      const employeeCheckboxes = document.querySelectorAll(
-        '#employeeFilter input[type="checkbox"]:checked'
-      );
-
-      const selectedSites = Array.from(siteCheckboxes).map((cb) => cb.value);
-      const selectedEmployees = Array.from(employeeCheckboxes).map(
-        (cb) => cb.value
-      );
-
-      const staffRows = document.querySelectorAll(".staff-row");
-      staffRows.forEach((row) => {
-        const employeeType = row.getAttribute("data-employee-type");
-        const showRow =
-          selectedEmployees.includes("all") ||
-          selectedEmployees.includes(employeeType);
-
-        row.style.display = showRow ? "grid" : "none";
-
-        if (showRow) {
-          const shifts = row.querySelectorAll(".shift-block");
-          shifts.forEach((shift) => {
-            const shiftSite = shift.textContent.toLowerCase();
-            const showShift =
-              selectedSites.includes("all") ||
-              selectedSites.some((site) =>
-                shiftSite.includes(site.toLowerCase())
-              );
-
-            shift.style.opacity = showShift ? "1" : "0.3";
-            shift.style.pointerEvents = showShift ? "auto" : "none";
-          });
-        }
-      });
-    }
-
-      // Helper function to get dates for the current week
-      function getCurrentWeekDates() {
-        const today = new Date();
-        const currentDay = today.getDay();
-        const diff = today.getDate() - currentDay + (currentDay === 0 ? -6 : 1);
-        const monday = new Date(today.setDate(diff));
-        
-        const weekDates = [];
-        for (let i = 0; i < 7; i++) {
-          const date = new Date(monday);
-          date.setDate(monday.getDate() + i);
-          weekDates.push(formatDate(date));
-        }
-        return weekDates;
-      }
-
-      // Get current week dates
-      const weekDates = getCurrentWeekDates();
-
-    const staffData = [
-      {
-        name: "Greg Lane",
-        hours: "21h 30 min",
-        employeeType: "technologist",
-        shifts: {
-            [weekDates[0]]: [
-            {
-              site: "Edmondson Park | US01",
-              room: "US01",
-              from: "08:00",
-              to: "11:00",
-            },
-          ],
-            [weekDates[1]]: [
-            {
-              site: "Edmondson Park | US02",
-              room: "US02",
-              from: "08:00",
-              to: "11:00",
-            },
-            {
-              site: "Edmondson Park | US03",
-              room: "US03",
-              from: "13:00",
-              to: "17:00",
-            },
-          ],
-            [weekDates[2]]: [
-            {
-              site: "Ingleburn | US01",
-              room: "US01",
-              from: "8:00",
-              to: "11:00",
-            },
-          ],
-            [weekDates[3]]: [
-            {
-              site: "Ingleburn | US02",
-              room: "US02",
-              from: "8:00",
-              to: "11:00",
-            },
-          ],
-            [weekDates[4]]: [
-            {
-              site: "Edmondson Park | US03",
-              room: "US03",
-              from: "8:00",
-              to: "11:00",
-            },
-          ],
-        },
-      },
-      {
-        name: "Arlene Richards",
-          hours: "32h",
-          employeeType: "technologist",
-        shifts: {
-            [weekDates[0]]: [
-            {
-              site: "Edmondson Park | CT",
-              room: "CT",
-                from: "09:00",
-                to: "17:00",
-            },
-          ],
-            [weekDates[2]]: [
-            {
-                site: "Ingleburn | CT",
-              room: "CT",
-                from: "09:00",
-                to: "17:00",
-            },
-          ],
-            [weekDates[4]]: [
-            {
-                site: "Edmondson Park | CT",
-                room: "CT",
-                from: "09:00",
-              to: "17:00",
-            },
-          ],
-        },
-      },
-      {
-          name: "Cameron Edwards",
-          hours: "40h",
-        employeeType: "technologist",
-        shifts: {
-            [weekDates[1]]: [
-            {
-              site: "Edmondson Park | US01",
-              room: "US01",
-                from: "08:00",
-                to: "17:00",
-            },
-          ],
-            [weekDates[3]]: [
-            {
-                site: "Ingleburn | US02",
-              room: "US02",
-                from: "08:00",
-              to: "17:00",
-            },
-          ],
-            [weekDates[4]]: [
-            {
-              site: "Edmondson Park | X-Ray",
-                room: "X-Ray",
-                from: "08:00",
-                to: "14:00",
-            },
-          ],
-        },
-      },
-      {
-          name: "Marjorie Hawkins",
-        hours: "35h",
-          employeeType: "technologist",
-        shifts: {
-            [weekDates[0]]: [
-            {
-                site: "Edmondson Park | US01",
-                room: "US01",
-                from: "11:00",
-              to: "17:00",
-            },
-          ],
-            [weekDates[2]]: [
-            {
-              site: "Edmondson Park | CT",
-                room: "CT",
-                from: "08:00",
-              to: "17:00",
-            },
-          ],
-            [weekDates[4]]: [
-            {
-              site: "Ingleburn | US02",
-                room: "US02",
-                from: "08:00",
-                to: "14:00",
-            },
-          ],
-        },
-      },
-      {
-          name: "Sarah Chen",
-          hours: "28h",
-        employeeType: "radiologist",
-        shifts: {
-            [weekDates[1]]: [
-            {
-                site: "Edmondson Park | US03",
-                room: "US03",
-                from: "08:00",
-                to: "15:00",
-            },
-          ],
-            [weekDates[3]]: [
-            {
-              site: "Ingleburn | US01",
-                room: "US01",
-                from: "09:00",
-              to: "16:00",
-            },
-          ],
-        },
-      },
-      {
-          name: "Michael Torres",
-          hours: "24h",
-        employeeType: "technologist",
-        shifts: {
-            [weekDates[0]]: [
-            {
-                site: "Edmondson Park | CT",
-                room: "CT",
-                from: "13:00",
-              to: "17:00",
-            },
-          ],
-            [weekDates[2]]: [
-            {
-              site: "Ingleburn | US01",
-                room: "US01",
-                from: "08:00",
-              to: "16:00",
-            },
-          ],
-        },
-      },
-      {
-          name: "Emily Parker",
-          hours: "40h",
-          employeeType: "technologist",
-        shifts: {
-            [weekDates[1]]: [
-            {
-                site: "Edmondson Park | X-Ray",
-                room: "X-Ray",
-                from: "08:00",
-              to: "17:00",
-            },
-          ],
-            [weekDates[3]]: [
-            {
-                site: "Ingleburn | X-Ray",
-                room: "X-Ray",
-                from: "08:00",
-              to: "17:00",
-            },
-          ],
-        },
-      },
-    ];
-
-    function updateDateDisplay() {
-      const startDate = new Date(currentDate);
-      const endDate = new Date(currentDate);
-      endDate.setDate(endDate.getDate() + 6);
-
-      const startDay = startDate.getDate();
-      const endDay = endDate.getDate();
-      const month = startDate.toLocaleDateString("en-US", { month: "short" });
-      const year = startDate.getFullYear();
-
-      // Update the document title and date range
-      document.title = `QUBS - Staff Rostering (${startDay}-${endDay} ${month} ${year})`;
-      const dateRangeElement = document.querySelector(".date-range");
-      if (dateRangeElement) {
-        dateRangeElement.textContent = `${startDay}-${endDay} ${month} ${year}`;
-      }
-
-      // Update day headers
-      const dayHeaders = document.querySelectorAll(".day-header");
-      const dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
-      for (let i = 0; i < 7; i++) {
-        const date = new Date(startDate);
-        date.setDate(date.getDate() + i);
-
-        if (dayHeaders[i]) {
-          const headerDiv = dayHeaders[i];
-          const dayNameDiv = headerDiv.querySelector(".day-name");
-          const dayNumberDiv = headerDiv.querySelector(".day-number");
-
-          if (dayNameDiv) dayNameDiv.textContent = dayNames[i] + ",";
-          if (dayNumberDiv) dayNumberDiv.textContent = date.getDate();
-        }
-      }
-
-      // Render staff data for the selected week
-      renderStaffData(startDate);
-    }
-
-    function formatDate(date) {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      return `${year}-${month}-${day}`;
-    }
-
-    // Add variables to track selected date and staff for adding shifts
-    let selectedDate = null;
-    let selectedStaff = null;
-
-    function openModal(date = null, staffName = null) {
-      const modal = document.getElementById("addShiftModal");
-      // First make the modal visible without animation
-      modal.classList.add("show");
-
-      // Force a reflow to ensure the initial transform is applied
-      modal.offsetHeight;
-
-      // Then add the active class to trigger the animation
-      requestAnimationFrame(() => {
-        modal.classList.add("active");
-      });
-
-      // Store selected date and staff
-      selectedDate = date;
-      selectedStaff = staffName;
-
-      // Pre-select the staff in dropdown if provided
-      const staffSelect = document.getElementById("staffSelect");
-      if (staffName && staffSelect) {
-        const option = Array.from(staffSelect.options).find(
-          (opt) => opt.value === staffName
-        );
-        if (option) {
-          staffSelect.value = staffName;
-        }
-      }
-
-      // Update modal title to show selected date
-      const modalTitle = modal.querySelector(".modal-title");
-      if (modalTitle && date) {
-        const dateObj = new Date(date);
-        const formattedDate = dateObj.toLocaleDateString("en-US", {
-          weekday: "long",
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        });
-          modalTitle.textContent = `Add working hours`;
-      } else {
-        modalTitle.textContent = "Add working hours";
-      }
-    }
-
-    // Add time conversion helper function
-    function convertTimeToMinutes(timeStr) {
-      if (!timeStr) return 0;
-      const [hours, minutes] = timeStr.split(":").map(Number);
-      return hours * 60 + minutes;
-    }
-
-    // Add time calculation helper functions
-    function calculateShiftDuration(fromTime, toTime) {
-      const startMinutes = convertTimeToMinutes(fromTime);
-      const endMinutes = convertTimeToMinutes(toTime);
-      let duration = endMinutes - startMinutes;
-
-      // If end time is less than start time, assume it's next day
-      if (duration < 0) {
-        duration += 24 * 60; // Add 24 hours in minutes
-      }
-
-      return duration / 60; // Convert to hours
-    }
-
-    function formatHours(totalHours) {
-      if (totalHours === 0) return "0h";
-      
-      const hours = Math.floor(totalHours);
-      const minutes = Math.round((totalHours - hours) * 60);
-
-      if (minutes === 0) {
-        return `${hours}h`;
-      } else if (hours === 0) {
-        return `${minutes}min`;
-      }
-      return `${hours}h ${minutes}min`;
-    }
-
-    function calculateStaffTotalHours(staff, startDate, endDate) {
-      let totalMinutes = 0;
-
-      // Convert dates to string format used in shifts
-      const currentDate = new Date(startDate);
-      const endDateObj = new Date(endDate);
-
-      while (currentDate <= endDateObj) {
-        const dateStr = formatDate(currentDate);
-        if (staff.shifts && staff.shifts[dateStr]) {
-          staff.shifts[dateStr].forEach((shift) => {
-            if (shift && shift.from && shift.to) {
-              const startMinutes = convertTimeToMinutes(shift.from);
-              const endMinutes = convertTimeToMinutes(shift.to);
-              let duration = endMinutes - startMinutes;
-
-              // If end time is less than start time, assume it's next day
-              if (duration < 0) {
-                duration += 24 * 60; // Add 24 hours in minutes
-              }
-
-            if (!isNaN(duration) && duration > 0) {
-                totalMinutes += duration;
-            } else {
-                console.warn(`Invalid duration for shift: ${shift.from} - ${shift.to}`);
-              }
-            }
-          });
-        }
-        currentDate.setDate(currentDate.getDate() + 1);
-      }
-
-      // Convert total minutes to hours for formatting
-      const totalHours = totalMinutes / 60;
-      return formatHours(totalHours);
-    }
-
-    // Add a debug function to help verify calculations
-    function debugTimeCalculation(fromTime, toTime) {
-      console.log(`Calculating duration for: ${fromTime} - ${toTime}`);
-      console.log(`Start minutes: ${convertTimeToMinutes(fromTime)}`);
-      console.log(`End minutes: ${convertTimeToMinutes(toTime)}`);
-      console.log(
-        `Duration: ${calculateShiftDuration(fromTime, toTime)} hours`
-      );
-    }
-
-    function renderStaffData(startDate) {
-      console.log("renderStaffData", staffData);
-      const scheduleGrid = document.querySelector(".schedule-grid");
-      if (!scheduleGrid) return;
-
-      // Calculate end date (7 days from start)
-      const endDate = new Date(startDate);
-      endDate.setDate(endDate.getDate() + 6);
-
-      // Clear existing staff rows except header
-      const existingRows = scheduleGrid.querySelectorAll(".staff-row");
-      existingRows.forEach((row) => row.remove());
-
-      try {
-        // Create staff rows
-        staffData.forEach((staff, staffIndex) => {
-          const staffRow = document.createElement("div");
-          staffRow.className = "staff-row";
-          staffRow.setAttribute("data-employee-type", staff.employeeType);
-
-          // Calculate total hours for the current week
-          const totalHours = calculateStaffTotalHours(staff, startDate, endDate);
-
-          // Add staff info
-          const staffInfo = document.createElement("div");
-          staffInfo.className = "staff-info";
-          staffInfo.innerHTML = `
-                    <div class="staff-name">${staff.name}</div>
-                    <div class="staff-hours">${totalHours}</div>
-                `;
-          staffRow.appendChild(staffInfo);
-
-          // Add day cells
-          for (let i = 0; i < 7; i++) {
-            const currentDate = new Date(startDate);
-            currentDate.setDate(startDate.getDate() + i);
-            const dateStr = formatDate(currentDate);
-
-            const dayCell = document.createElement("div");
-            dayCell.className = "day-cell";
-            dayCell.dataset.date = dateStr;
-            dayCell.dataset.staffName = staff.name;
-            dayCell.id = `cell-${staffIndex}-${i}`;
-
-            // Add drag and drop event listeners
-            dayCell.addEventListener("dragover", handleDragOver);
-            dayCell.addEventListener("dragenter", handleDragEnter);
-            dayCell.addEventListener("dragleave", handleDragLeave);
-            dayCell.addEventListener("drop", handleDrop);
-
-            // Add shifts for this day if they exist
-            if (staff.shifts && staff.shifts[dateStr]) {
-              staff.shifts[dateStr].forEach((shift) => {
-                if (shift) {
-                  // Check if shift exists
-                  try {
-                    // Standardize the shift data
-                    const standardizedShift = {
-                      id: shift.id || generateUniqueId(),
-                      site: shift.site,
-                      room: shift.room || getShiftRoom(shift.site),
-                      from: shift.from,
-                      to: shift.to,
-                      type: shift.type || `shift-${(shift.room || getShiftRoom(shift.site)).toLowerCase()}`
-                    };
-
-                    const shiftBlock = document.createElement("div");
-                    shiftBlock.className = "shift-block";
-                    shiftBlock.setAttribute("data-room", standardizedShift.room);
-                    
-                    // Add the room-specific class for styling
-                    if (standardizedShift.type) {
-                      shiftBlock.classList.add(standardizedShift.type);
-                    }
-
-                    // Format the display times
-                    let displayFrom = standardizedShift.from;
-                    let displayTo = standardizedShift.to;
-
-                    if (
-                      displayFrom.includes("am") ||
-                      displayFrom.includes("pm")
-                    ) {
-                      displayFrom = convertTo24Hour(displayFrom);
-                    }
-                    if (
-                      displayTo.includes("am") ||
-                      displayTo.includes("pm")
-                    ) {
-                      displayTo = convertTo24Hour(displayTo);
-                    }
-
-                    shiftBlock.innerHTML = `
-                                        <div class="shift-title">${standardizedShift.site}</div>
-                                        <div class="shift-time">${displayFrom} - ${displayTo}</div>
-                                    `;
-                    shiftBlock.draggable = true;
-
-                    // Add drag event listeners
-                    shiftBlock.addEventListener("dragstart", handleDragStart);
-                    shiftBlock.addEventListener("dragend", handleDragEnd);
-
-                    // Add click handler for edit modal
-                    shiftBlock.addEventListener("click", (e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-
-                      // Remove active class from all shift blocks
-                      document.querySelectorAll('.shift-block').forEach(block => {
-                        block.classList.remove('active');
-                      });
-
-                      // Add active class to clicked shift block
-                      shiftBlock.classList.add('active');
-
-                      // Store the active shift's ID
-                      document.body.dataset.activeShiftId = standardizedShift.id;
-
-                      openEditModal(standardizedShift, dateStr, staff.name);
-                    });
-
-                    // Store standardized shift data
-                    shiftBlock.dataset.shiftData =
-                      JSON.stringify(standardizedShift);
-                    shiftBlock.dataset.date = dateStr;
-                    shiftBlock.dataset.staffName = staff.name;
-                    shiftBlock.dataset.shiftId = standardizedShift.id;
-
-                    // Restore active state if this was the active shift
-                    if (document.body.dataset.activeShiftId === standardizedShift.id) {
-                      shiftBlock.classList.add('active');
-                    }
-
-                    dayCell.appendChild(shiftBlock);
-                  } catch (error) {
-                    console.error("Error creating shift block:", error);
-                  }
-                }
-              });
-            } else {
-              // Add "+" button if no shifts
-              const addButton = document.createElement("div");
-              addButton.className = "add-shift-btn";
-              addButton.textContent = "+";
-              addButton.addEventListener("click", () =>
-                openModal(dateStr, staff.name)
-              );
-              dayCell.appendChild(addButton);
-            }
-
-            staffRow.appendChild(dayCell);
-          }
-
-          scheduleGrid.appendChild(staffRow);
-        });
-
-        // Re-initialize tooltips
-        initializeTooltips();
-
-        // Calculate and update workload
-        calculateWorkload(startDate);
-        
-        // Add this line to reinitialize handlers after rendering
-        initializeShiftBlockHandlers();
-      } catch (error) {
-        console.error("Error rendering staff data:", error);
-      }
-    }
-
-    // Helper function to get room from site text
-    function getShiftRoom(siteText) {
-      if (!siteText) return "";
-      try {
-        if (siteText.includes("US01")) return "US01";
-        if (siteText.includes("US02")) return "US02";
-        if (siteText.includes("US03")) return "US03";
-        if (siteText.includes("CT")) return "CT";
-        if (siteText.includes("X-Ray")) return "X-Ray";
-        return "";
-      } catch (error) {
-        console.error("Error getting shift room:", error);
-        return "";
-      }
-    }
-
-      // Add workloadData as a global variable
-      let workloadData = {
-          "Edmondson Park": {
-            total: { current: 0, max: 200 },
-            US01: { current: 0, max: 40 },
-            US02: { current: 0, max: 40 },
-            US03: { current: 0, max: 40 },
-            CT: { current: 0, max: 40 },
-            "X-Ray": { current: 0, max: 40 },
-          },
-          Ingleburn: {
-            total: { current: 0, max: 200 },
-            US01: { current: 0, max: 40 },
-            US02: { current: 0, max: 40 },
-            US03: { current: 0, max: 40 },
-            CT: { current: 0, max: 40 },
-            "X-Ray": { current: 0, max: 40 },
-          },
-        };
-
-      // Update calculateWorkload function to use global workloadData
-      function calculateWorkload(startDate) {
-        // Convert startDate to Date object if it's a string
-        startDate = startDate instanceof Date ? startDate : new Date(startDate);
-        
-        // Reset workload data
-        Object.keys(workloadData).forEach(site => {
-          Object.keys(workloadData[site]).forEach(room => {
-            workloadData[site][room].current = 0;
-          });
-        });
-
-        // Calculate end date
-        const endDate = new Date(startDate);
-        endDate.setDate(endDate.getDate() + 6);
-
-        try {
-          // Process staff data
-          staffData.forEach((staff) => {
-            if (staff.shifts) {
-              Object.entries(staff.shifts).forEach(([dateStr, shifts]) => {
-                const shiftDate = new Date(dateStr);
-                // Normalize dates for comparison (ignore time)
-                const normalizedShiftDate = new Date(shiftDate.getFullYear(), shiftDate.getMonth(), shiftDate.getDate());
-                const normalizedStartDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-                const normalizedEndDate = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
-
-                if (
-                  normalizedShiftDate >= normalizedStartDate &&
-                  normalizedShiftDate <= normalizedEndDate &&
-                  Array.isArray(shifts)
-                ) {
-                  shifts.forEach((shift) => {
-                    if (shift && shift.site && shift.from && shift.to) {
-                      // Extract site and room from shift data
-                      let site, room;
-                      if (shift.site.includes(" | ")) {
-                        [site, room] = shift.site.split(" | ");
-                      } else {
-                        site = shift.site;
-                        room = shift.room || getShiftRoom(shift.site);
-                      }
-
-                      // Calculate duration
-                      const duration = calculateShiftDuration(
-                        shift.from,
-                        shift.to
-                      );
-
-                      // Update workload if site and room exist in workloadData
-                      if (workloadData[site] && workloadData[site][room]) {
-                        workloadData[site][room].current += duration;
-                        workloadData[site].total.current += duration;
-                      }
-                    }
-                  });
-                }
-              });
-            }
-          });
-
-          // Update the display
-          updateWorkloadDisplay(workloadData);
-        } catch (error) {
-          console.error("Error calculating workload:", error);
-        }
-      }
-
-    // Update the sidebar workload display
-    function updateWorkloadDisplay(workloadData) {
-      const sidebar = document.querySelector(".sidebar");
-      sidebar.innerHTML = ""; // Clear existing content
-
-      // Create sections for each site
-      Object.keys(workloadData).forEach((site) => {
-        const sectionDiv = document.createElement("div");
-        sectionDiv.className = "workload-section";
-
-        // Get total data and calculate percentage
-        const totalData = workloadData[site].total;
-        const totalPercentage = Math.min(
-          (totalData.current / totalData.max) * 100,
-          100
-        );
-
-        // Create the section header with total workload
-        sectionDiv.innerHTML = `
-          <div class="workload-header-section">
-            <div class="section-title">${site}</div>
-            <div class="workload-item total-workload">
-              <div class="workload-header">
-                <div class="workload-subtitle">Site Workload</div>
-                <div class="workload-hours-container">
-                  <span class="workload-hours-current">${formatHours(totalData.current)}</span>
-                  <span class="workload-total-current">/ ${formatHours(totalData.max)}</span>
-                </div>
-              </div>
-              <div class="workload-total-bar">
-                <div class="workload-total-fill" style="width: ${totalPercentage}%"></div>
+                <img
+                  src="./assets/dropdown-arrow.svg"
+                  alt="dropdown-arrow"
+                  width="10px"
+                  height="6px"
+                />
               </div>
             </div>
           </div>
-          <div class="workload-content"></div>
-        `;
 
-        const workloadContent = sectionDiv.querySelector(".workload-content");
-
-        // Add workload items for each room (excluding 'total')
-        Object.entries(workloadData[site])
-          .filter(([room]) => room !== 'total')
-          .forEach(([room, data]) => {
-            const percentage = Math.min((data.current / data.max) * 100, 100);
-            const roomDiv = document.createElement("div");
-            roomDiv.className = "workload-item";
-            roomDiv.setAttribute("data-room", room);
-            roomDiv.innerHTML = `
-              <div class="workload-header">
-                <div class="workload-room">${room}</div>
-                <div class="workload-hours-container">
-                  <span class="workload-hours">${formatHours(data.current)}</span>
-                  <span class="workload-total">/ ${formatHours(data.max)}</span>
-                </div>
-              </div>
-              <div class="workload-bar">
-                <div class="workload-fill" style="width: ${percentage}%"></div>
-              </div>
-            `;
-            workloadContent.appendChild(roomDiv);
-          });
-
-        sidebar.appendChild(sectionDiv);
-      });
-    }
-
-    function getWorkloadColorClass(percentage) {
-      if (percentage >= 90) return "workload-pink";
-      if (percentage >= 70) return "workload-blue";
-      if (percentage >= 50) return "workload-purple";
-      return "workload-green";
-    }
-
-    // Initialize tooltips
-    initializeTooltips();
-
-    // Update the JavaScript function that creates shift blocks
-    function getShiftRoom(siteText) {
-      if (siteText.includes("US01")) return "US01";
-      if (siteText.includes("US02")) return "US02";
-      if (siteText.includes("US03")) return "US03";
-      if (siteText.includes("CT")) return "CT";
-      if (siteText.includes("X-Ray")) return "X-Ray";
-      return "";
-    }
-
-    // Update the addShift function to include data-room
-    function addShift(e) {
-      e.preventDefault();
-      e.stopPropagation();
-
-      // Clear any active states
-      document.querySelectorAll('.shift-block').forEach(block => {
-        block.classList.remove('active');
-      });
-      // Clear the active shift ID
-      delete document.body.dataset.activeShiftId;
-
-      // Reset previous errors
-      document.querySelectorAll(".form-group").forEach((group) => {
-        group.classList.remove("error");
-      });
-
-      const staffSelect = document.getElementById("staffSelect");
-      const siteSelect = document.getElementById("siteSelect");
-      const roomSelect = document.getElementById("roomSelect");
-      const fromTime = document.getElementById("fromTime");
-      const toTime = document.getElementById("toTime");
-
-      let hasError = false;
-
-      // Validate each field
-      if (!staffSelect.value) {
-        staffSelect.parentElement.classList.add("error");
-        hasError = true;
-      }
-      if (!siteSelect.value) {
-        siteSelect.parentElement.classList.add("error");
-        hasError = true;
-      }
-      if (!roomSelect.value) {
-        roomSelect.parentElement.classList.add("error");
-        hasError = true;
-      }
-      if (!fromTime.value) {
-        fromTime.parentElement.classList.add("error");
-        hasError = true;
-      }
-      if (!toTime.value) {
-        toTime.parentElement.classList.add("error");
-        hasError = true;
-      }
-
-      if (hasError) {
-        return false;
-      }
-
-      try {
-        // Find the staff member
-        const staffMember = staffData.find(
-          (staff) => staff.name === staffSelect.value
-        );
-        if (!staffMember) {
-          showNotification("Staff member not found");
-          return false;
-        }
-
-        // Initialize shifts if needed
-        if (!staffMember.shifts) {
-          staffMember.shifts = {};
-        }
-
-        const targetDate = selectedDate || formatDate(currentDate);
-        if (!staffMember.shifts[targetDate]) {
-          staffMember.shifts[targetDate] = [];
-        }
-
-        // Create the new shift object
-        const newShift = {
-          id: generateUniqueId(),
-          site: `${siteSelect.value} | ${roomSelect.value}`,
-          room: roomSelect.value,
-          from: fromTime.value,
-          to: toTime.value,
-          type: `shift-${roomSelect.value.toLowerCase()}`
-        };
-
-        // Add the new shift
-        staffMember.shifts[targetDate].push(newShift);
-
-        // Sort shifts by start time
-        staffMember.shifts[targetDate].sort((a, b) => {
-          return convertTimeToMinutes(a.from) - convertTimeToMinutes(b.from);
-        });
-
-        // Close modal first
-        closeModal();
-
-        // Then re-render and show notification
-        renderStaffData(currentDate);
-        calculateWorkload(currentDate); // Recalculate workload after adding shift
-        showNotification("Shift added successfully!");
-        return false;
-      } catch (error) {
-        console.error("Error adding shift:", error);
-        showNotification("Error adding shift. Please try again.");
-        return false;
-      }
-    }
-
-    // Update the renderStaffData function to include data-room
-    function renderShiftBlock(shift) {
-      const shiftBlock = document.createElement("div");
-      shiftBlock.className = "shift-block";
-      shiftBlock.setAttribute("data-room", getShiftRoom(shift.site));
-      shiftBlock.innerHTML = `
-                <div class="shift-title">${shift.site}</div>
-                <div class="shift-time">${shift.from} - ${shift.to}</div>
-            `;
-      shiftBlock.draggable = true;
-      return shiftBlock;
-    }
-
-    function handleDragStart(e) {
-      console.log("handleDragStart", e.target);
-      if (e.target.classList.contains("disabled")) {
-        e.preventDefault();
-        return;
-      }
-
-      draggedShift = e.target;
-
-      setTimeout(() => {
-        draggedShift.classList.add("dragging");
-      }, 0);
-
-      // Store the original cell and shift data
-      draggedShift.dataset.originalCell = draggedShift.parentNode.id;
-
-      // Ensure we have valid shift data
-      try {
-        const shiftData = JSON.parse(draggedShift.dataset.shiftData);
-        if (!shiftData.id) {
-          shiftData.id = generateUniqueId();
-          draggedShift.dataset.shiftData = JSON.stringify(shiftData);
-        }
-      } catch (error) {
-        console.error("Error preparing shift for drag:", error);
-        e.preventDefault();
-        return;
-      }
-
-      e.dataTransfer.effectAllowed = "move";
-      e.dataTransfer.setData("text/plain", "");
-
-      const dragImage = draggedShift.cloneNode(true);
-      dragImage.style.opacity = "0.5";
-      dragImage.style.position = "absolute";
-      dragImage.style.top = "-1000px";
-      document.body.appendChild(dragImage);
-      e.dataTransfer.setDragImage(dragImage, 0, 0);
-      setTimeout(() => document.body.removeChild(dragImage), 0);
-    }
-
-    function handleDragEnd(e) {
-      console.log("handleDragEnd");
-      // Remove dragging class
-      e.target.classList.remove("dragging");
-
-      // Remove drag-over class from all cells
-      document.querySelectorAll(".drag-over").forEach((cell) => {
-        cell.classList.remove("drag-over");
-      });
-
-      draggedShift = null;
-    }
-
-    function handleDragOver(e) {
-      if (e.preventDefault) {
-        e.preventDefault();
-      }
-
-      const cell = e.currentTarget;
-
-      // Only add drag-over class if not already present
-      if (!cell.classList.contains("drag-over")) {
-        cell.classList.add("drag-over");
-      }
-
-      e.dataTransfer.dropEffect = "move";
-      return false;
-    }
-
-    function handleDragEnter(e) {
-      e.preventDefault();
-      // Remove drag-over class from all other cells
-      document.querySelectorAll(".drag-over").forEach((cell) => {
-        if (cell !== e.currentTarget) {
-          cell.classList.remove("drag-over");
-        }
-      });
-    }
-
-    function handleDragLeave(e) {
-      // Only remove the class if we're leaving the cell (not entering a child element)
-      if (!e.currentTarget.contains(e.relatedTarget)) {
-        e.currentTarget.classList.remove("drag-over");
-      }
-    }
-
-    function handleDrop(e) {
-      e.preventDefault();
-      e.currentTarget.classList.remove("drag-over");
-      if (!draggedShift || draggedShift.classList.contains("disabled")) return;
-
-      const targetCell = e.currentTarget;
-      const sourceCell = draggedShift.parentNode;
-
-      const targetDate = targetCell.dataset.date;
-      const targetStaffName = targetCell.dataset.staffName;
-      const sourceDate = draggedShift.dataset.date;
-      const sourceStaffName = draggedShift.dataset.staffName;
-      const shiftId = draggedShift.dataset.shiftId;
-      console.log(draggedShift.dataset, sourceDate, targetDate, sourceStaffName, targetStaffName);
-      if (sourceDate === targetDate && sourceStaffName === targetStaffName) {
-        return;
-      }
-
-      try {
-        const shiftData = JSON.parse(draggedShift.dataset.shiftData);
-
-        // Ensure room and type are preserved
-        shiftData.room = shiftData.room || getShiftRoom(shiftData.site);
-        shiftData.type = `shift-${shiftData.room.toLowerCase()}`;
-
-        // Find source staff member and remove the shift
-        const sourceStaff = staffData.find(staff => staff.name === sourceStaffName);
-        if (sourceStaff && sourceStaff.shifts[sourceDate]) {
-          // Remove only the specific shift by ID
-          sourceStaff.shifts[sourceDate] = sourceStaff.shifts[sourceDate].filter(shift => {
-            // If we have an ID, use it for exact matching
-            if (shiftId && shift.id) {
-              return shift.id !== shiftId;
-            }
-            // Fallback to time/room matching only if no ID is available
-            return !(shift.from === shiftData.from && 
-                shift.to === shiftData.to &&
-                    shift.room === shiftData.room);
-          });
-
-          // Clean up empty date entry
-          if (sourceStaff.shifts[sourceDate].length === 0) {
-            delete sourceStaff.shifts[sourceDate];
-          }
-        }
-
-        // Find target staff member and add the shift
-        const targetStaff = staffData.find(staff => staff.name === targetStaffName);
-        if (!targetStaff) {
-          console.error("Target staff not found");
-          return;
-        }
-
-        // Initialize shifts array if needed
-          if (!targetStaff.shifts[targetDate]) {
-            targetStaff.shifts[targetDate] = [];
-          }
-
-        // Ensure the shift has an ID and preserve room information
-        if (!shiftData.id) {
-          shiftData.id = generateUniqueId();
-        }
-
-        // Add the shift to target staff with preserved styling
-        targetStaff.shifts[targetDate].push({
-            ...shiftData,
-          room: shiftData.room,
-          type: `shift-${shiftData.room.toLowerCase()}`
-        });
-
-          // Sort shifts by start time
-          targetStaff.shifts[targetDate].sort((a, b) => {
-          return convertTimeToMinutes(a.from) - convertTimeToMinutes(b.from);
-          });
-
-        // Re-render the schedule
-        renderStaffData(currentDate);
-        calculateWorkload(currentDate); // Recalculate workload after moving shift
-      } catch (error) {
-        console.error("Error moving shift:", error);
-      }
-    }
-
-    function generateUniqueId() {
-      return Date.now().toString(36) + Math.random().toString(36).substr(2);
-    }
-
-    // Add time conversion helper function
-    function convertTo24Hour(time) {
-      const [timeStr, meridiem] = time.toLowerCase().split(" ");
-      let [hours, minutes] = timeStr.split(":").map(Number);
-
-      if (meridiem === "pm" && hours !== 12) {
-        hours += 12;
-      } else if (meridiem === "am" && hours === 12) {
-        hours = 0;
-      }
-
-      return `${hours.toString().padStart(2, "0")}:${minutes
-        .toString()
-        .padStart(2, "0")}`;
-    }
-
-    function closeModal() {
-      // Clear any active states
-      document.querySelectorAll('.shift-block').forEach(block => {
-        block.classList.remove('active');
-      });
-      // Clear the active shift ID
-      delete document.body.dataset.activeShiftId;
-
-      const modal = document.getElementById("addShiftModal");
-      modal.classList.remove("active");
-
-      // Wait for the animation to complete before hiding the modal
-      setTimeout(() => {
-        modal.classList.remove("show");
-      }, 300); // Match the transition duration
-
-      // Reset selected date and staff
-      selectedDate = null;
-      selectedStaff = null;
-    }
-
-    function bindEventListeners() {
-      // Navigation arrows
-      document.querySelectorAll(".nav-arrow").forEach((arrow, index) => {
-        arrow.addEventListener("click", () => {
-          if (index === 0) {
-            // Previous week
-            currentDate.setDate(currentDate.getDate() - 7);
-          } else {
-            // Next week
-            currentDate.setDate(currentDate.getDate() + 7);
-          }
-          updateDateDisplay();
-          renderStaffData(currentDate);
-          calculateWorkload(currentDate); // Recalculate workload for the new week
-        });
-      });
-
-      // Today button
-      document.querySelector(".today-btn").addEventListener("click", () => {
-        currentDate = new Date();
-        // Set to Monday of current week
-        const day = currentDate.getDay();
-        const diff = currentDate.getDate() - day + (day === 0 ? -6 : 1);
-        currentDate.setDate(diff);
-        updateDateDisplay();
-        renderStaffData(currentDate);
-        calculateWorkload(currentDate); // Recalculate workload when returning to current week
-      });
-
-      // Add shift buttons - only attach to the + button
-      document.querySelectorAll(".add-shift-btn").forEach((btn) => {
-        btn.addEventListener("click", (e) => {
-          e.preventDefault();
-          e.stopPropagation(); // Prevent event bubbling
-          const cell = e.target.closest(".day-cell");
-          if (cell) {
-            const date = cell.dataset.date;
-            const staffName = cell.dataset.staffName;
-            openModal(date, staffName);
-          }
-        });
-      });
-
-      // Remove any click handlers from day cells that might trigger the add modal
-      document.querySelectorAll(".day-cell").forEach((cell) => {
-        cell.addEventListener("click", (e) => {
-          // Only open add modal if clicking directly on the cell (not on a shift)
-          if (e.target === cell) {
-            const date = cell.dataset.date;
-            const staffName = cell.dataset.staffName;
-            openModal(date, staffName);
-          }
-        });
-      });
-    }
-
-    function filterSchedule(dropdown) {
-      const value = dropdown.value;
-      const staffRows = document.querySelectorAll(".staff-row");
-
-      if (dropdown.options[0].text.includes("employee types")) {
-        // Filter by employee type (simplified - show/hide rows)
-        staffRows.forEach((row, index) => {
-          if (value === "All employee types") {
-            row.style.display = "grid";
-          } else {
-            // Simple logic - hide some staff based on filter
-            row.style.display = index % 2 === 0 ? "grid" : "none";
-          }
-        });
-      } else if (dropdown.options[0].text.includes("sites")) {
-        // Filter by site - highlight relevant shifts
-        const shiftBlocks = document.querySelectorAll(".shift-block");
-        shiftBlocks.forEach((block) => {
-          if (value === "All sites") {
-            block.style.opacity = "1";
-          } else {
-            const isRelevant = block.textContent
-              .toLowerCase()
-              .includes(value.toLowerCase());
-            block.style.opacity = isRelevant ? "1" : "0.3";
-          }
-        });
-      }
-    }
-
-    function updateWorkload() {
-      // Animate workload bars
-      const workloadFills = document.querySelectorAll(".workload-fill");
-      workloadFills.forEach((fill) => {
-        const currentWidth = fill.style.width;
-        fill.style.width = "0%";
-        setTimeout(() => {
-          fill.style.width = currentWidth;
-        }, 100);
-      });
-    }
-
-    function showNotification(message) {
-      // Create and show notification
-      const notification = document.createElement("div");
-      notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: white;
-                color: #10b981;
-                padding: 12px 20px;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                z-index: 2000;
-                transform: translateX(100%);
-                transition: transform 0.3s ease;
-            `;
-      notification.textContent = message;
-      document.body.appendChild(notification);
-
-      // Animate in
-      setTimeout(() => {
-        notification.style.transform = "translateX(0)";
-      }, 100);
-
-      // Remove after 3 seconds
-      setTimeout(() => {
-        notification.style.transform = "translateX(100%)";
-        setTimeout(() => {
-          document.body.removeChild(notification);
-        }, 300);
-      }, 3000);
-    }
-
-    // Responsive handling
-    function handleResize() {
-      const sidebar = document.querySelector(".sidebar");
-      const scheduleSection = document.querySelector(".schedule-section");
-
-      if (window.innerWidth <= 768) {
-        sidebar.style.height = "auto";
-        scheduleSection.style.height = "auto";
-      }
-    }
-
-    window.addEventListener("resize", handleResize);
-    handleResize(); // Initial call
-
-    // Keyboard shortcuts
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        closeModal(); // Close modal on ESC
-      }
-      if (e.key === "n" && e.ctrlKey) {
-        e.preventDefault();
-        openModal(); // Ctrl + N to open Add Shift modal
-      }
-      if (e.key === "ArrowLeft" && e.altKey) {
-        // Alt + Left Arrow: Previous week
-        currentDate.setDate(currentDate.getDate() - 7);
-        updateDateDisplay();
-      }
-      if (e.key === "ArrowRight" && e.altKey) {
-        // Alt + Right Arrow: Next week
-        currentDate.setDate(currentDate.getDate() + 7);
-        updateDateDisplay();
-      }
-      if (e.key === "t" && e.ctrlKey) {
-        // Ctrl + T: Go to current week
-        e.preventDefault();
-        currentDate = new Date();
-        const day = currentDate.getDay();
-        const diff = currentDate.getDate() - day + (day === 0 ? -6 : 1);
-        currentDate.setDate(diff);
-        updateDateDisplay();
-      }
-    });
-
-    // Auto-save functionality (simulated)
-    let autoSaveTimeout;
-    function triggerAutoSave() {
-      clearTimeout(autoSaveTimeout);
-      autoSaveTimeout = setTimeout(() => {
-        console.log("Auto-saving schedule...");
-        // Here you would typically send data to server
-      }, 2000);
-    }
-
-    // Color coding for different shift types
-    function getShiftColor(siteText) {
-      if (siteText.includes("Edmondson Park | US01"))
-        return "shift-edmondson";
-      if (siteText.includes("Edmondson Park | US02")) return "shift-green";
-      if (siteText.includes("Edmondson Park | US03"))
-        return "shift-edmondson";
-      if (siteText.includes("Site | Room")) return "shift-site";
-      return "shift-purple";
-    }
-
-    // Initialize tooltips for shift blocks
-    function initializeTooltips() {
-      document.querySelectorAll(".shift-block").forEach((block) => {
-        block.title = `Click to edit shift details\nDrag to move to different day`;
-      });
-    }
-
-    // Add the fillShiftDetails function
-    function fillShiftDetails(site, room, fromTime, toTime) {
-      document.getElementById("siteSelect").value = site;
-      document.getElementById("roomSelect").value = room;
-      document.getElementById("fromTime").value = fromTime;
-      document.getElementById("toTime").value = toTime;
-
-      // Add visual feedback
-      const suggestions = document.querySelectorAll(".shift-suggestion");
-      suggestions.forEach((suggestion) => {
-        suggestion.style.opacity = "0.7";
-      });
-
-      // Highlight the selected suggestion
-      event.currentTarget.style.opacity = "1";
-    }
-
-    // Add variables to store current shift being edited
-    let currentEditingShift = null;
-    let currentEditingDate = null;
-
-    // Function to open edit modal
-    function openEditModal(shift, date, staffName) {
-      console.log("Opening edit modal with:", { shift, date, staffName }); // Debug log
-
-      if (!shift || !date || !staffName) {
-        console.error("Missing required data:", { shift, date, staffName });
-        return;
-      }
-
-      const modal = document.getElementById("editShiftModal");
-      currentEditingShift = shift;
-      currentEditingDate = date;
-
-      // Show the modal
-      modal.classList.add("show");
-      requestAnimationFrame(() => {
-        modal.classList.add("active");
-      });
-
-      try {
-        // Get form elements
-        const editStaffSelect = document.getElementById("editStaffSelect");
-        const editSiteSelect = document.getElementById("editSiteSelect");
-        const editRoomSelect = document.getElementById("editRoomSelect");
-        const editFromTime = document.getElementById("editFromTime");
-        const editToTime = document.getElementById("editToTime");
-
-        if (
-          !editStaffSelect ||
-          !editSiteSelect ||
-          !editRoomSelect ||
-          !editFromTime ||
-          !editToTime
-        ) {
-          console.error("Missing form elements");
-          return;
-        }
-
-          // Set staff and store original staff name
-        editStaffSelect.value = staffName;
-          editStaffSelect.dataset.originalStaff = staffName;
-
-          // Update site options using workload data
-          updateSiteOptions(null, editSiteSelect);
-
-        // Parse site and room from shift data
-        let site = "";
-        let room = "";
-
-        if (shift.site && shift.site.includes(" | ")) {
-          [site, room] = shift.site.split(" | ");
-        } else if (shift.site) {
-          // Handle cases where site is in different format
-          if (shift.site.includes("Edmondson Park")) {
-            site = "Edmondson Park";
-          } else if (shift.site.includes("Ingleburn")) {
-            site = "Ingleburn";
-          }
-          // Extract room from shift data
-          room = shift.room || getShiftRoom(shift.site);
-        }
-
-        // Set site and update room options
-        if (site) {
-          editSiteSelect.value = site;
-            updateRoomOptions(null, editSiteSelect, editRoomSelect);
-        } else {
-          // Default to Edmondson Park if no site is found
-          editSiteSelect.value = "Edmondson Park";
-            updateRoomOptions(null, editSiteSelect, editRoomSelect);
-        }
-
-        // Set room after options are updated
-        if (room) {
-          editRoomSelect.value = room;
-        }
-
-        // Handle time values
-        let fromTime = shift.from || "";
-        let toTime = shift.to || "";
-
-        // Convert times to 24-hour format if needed
-        if (fromTime.includes("am") || fromTime.includes("pm")) {
-          fromTime = convertTo24Hour(fromTime);
-        }
-        if (toTime.includes("am") || toTime.includes("pm")) {
-          toTime = convertTo24Hour(toTime);
-        }
-
-        // Ensure times are in HH:mm format
-        fromTime = fromTime.padStart(5, "0");
-        toTime = toTime.padStart(5, "0");
-
-        editFromTime.value = fromTime;
-        editToTime.value = toTime;
-
-        // Update modal title with date
-        const modalTitle = modal.querySelector(".modal-title");
-        if (modalTitle && date) {
-          const dateObj = new Date(date);
-          const formattedDate = dateObj.toLocaleDateString("en-US", {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          });
-            modalTitle.textContent = `Edit working hours`;
-        }
-      } catch (error) {
-        console.error("Error in openEditModal:", error);
-      }
-    }
-
-    // Function to close edit modal
-    function closeEditModal() {
-        // Remove active class from all shift blocks
-        document.querySelectorAll('.shift-block').forEach(block => {
-          block.classList.remove('active');
-        });
-      const modal = document.getElementById("editShiftModal");
-      modal.classList.remove("active");
-      setTimeout(() => {
-        modal.classList.remove("show");
-      }, 300);
-      currentEditingShift = null;
-      currentEditingDate = null;
-    }
-
-    // Function to fill edit form from suggestions
-    function fillEditShiftDetails(site, room, fromTime, toTime) {
-        const editStaffSelect = document.getElementById("editStaffSelect");
-        const editSiteSelect = document.getElementById("editSiteSelect");
-        const editRoomSelect = document.getElementById("editRoomSelect");
-        const editFromTime = document.getElementById("editFromTime");
-        const editToTime = document.getElementById("editToTime");
-
-        // Set site value first
-        editSiteSelect.value = site;
-
-        // Update room options based on the selected site
-        updateRoomOptions(editStaffSelect, editSiteSelect, editRoomSelect);
-
-        // Set other form values
-        editRoomSelect.value = room;
-        editFromTime.value = fromTime;
-        editToTime.value = toTime;
-
-        // Add visual feedback for suggestions
-      const suggestions = document.querySelectorAll(".shift-suggestion");
-      suggestions.forEach((suggestion) => {
-        suggestion.style.opacity = "0.7";
-      });
-
-      // Highlight the selected suggestion
-      event.currentTarget.style.opacity = "1";
-    }
-
-    // Function to handle shift edit
-    function handleShiftEdit(e) {
-      e.preventDefault();
-
-      if (!currentEditingShift || !currentEditingDate) {
-        console.error("No shift selected for editing");
-        showNotification("Error: No shift selected");
-        return;
-      }
-
-      try {
-          const oldStaffName = document.getElementById("editStaffSelect").dataset.originalStaff;
-          const newStaffName = document.getElementById("editStaffSelect").value;
-        const site = document.getElementById("editSiteSelect").value;
-        const room = document.getElementById("editRoomSelect").value;
-        const fromTime = document.getElementById("editFromTime").value;
-        const toTime = document.getElementById("editToTime").value;
-
-        // Validate inputs
-          if (!newStaffName || !site || !room || !fromTime || !toTime) {
-          showNotification("Please fill in all fields");
-          return;
-        }
-
-          // Create the updated shift object
-          const updatedShift = {
-            id: currentEditingShift.id || generateUniqueId(),
-            site: `${site} | ${room}`,
-            room: room,
-            from: fromTime,
-            to: toTime,
-            type: `shift-${room.toLowerCase()}`
-          };
-
-          // Find both staff members first to validate they exist
-          const originalStaffMember = oldStaffName ? staffData.find(staff => staff.name === oldStaffName) : null;
-          const targetStaffMember = staffData.find(staff => staff.name === newStaffName);
-
-          if (!targetStaffMember) {
-            console.error("Target staff member not found:", newStaffName);
-            showNotification("Error: Selected staff member not found");
-          return;
-        }
-
-          // Remove shift from original staff member if staff has changed
-          if (originalStaffMember && oldStaffName !== newStaffName) {
-            if (originalStaffMember.shifts[currentEditingDate]) {
-              originalStaffMember.shifts[currentEditingDate] = originalStaffMember.shifts[currentEditingDate].filter(s => {
-                // Try to match by ID first
-                if (currentEditingShift.id && s.id === currentEditingShift.id) {
-                  return false; // Remove if IDs match
-        }
-
-                // If no ID match, try matching by time and room
-                const normalizeTime = (time) => {
-                  if (!time) return "";
-                  if (time.toLowerCase().includes("am") || time.toLowerCase().includes("pm")) {
-                    return convertTo24Hour(time);
-                  }
-                  return time;
-                };
-
-                const sFrom = normalizeTime(s.from);
-                const sTo = normalizeTime(s.to);
-                const currentFrom = normalizeTime(currentEditingShift.from);
-                const currentTo = normalizeTime(currentEditingShift.to);
-                const sRoom = s.room || getShiftRoom(s.site);
-                const currentRoom = currentEditingShift.room || getShiftRoom(currentEditingShift.site);
-
-                return !(sFrom === currentFrom && 
-                        sTo === currentTo && 
-                        sRoom === currentRoom);
-              });
-
-              // Clean up empty date entries
-              if (originalStaffMember.shifts[currentEditingDate].length === 0) {
-                delete originalStaffMember.shifts[currentEditingDate];
-              }
-            }
-          }
-
-          // Initialize shifts for target staff member if needed
-          if (!targetStaffMember.shifts) {
-            targetStaffMember.shifts = {};
-          }
-          if (!targetStaffMember.shifts[currentEditingDate]) {
-            targetStaffMember.shifts[currentEditingDate] = [];
-          }
-
-          // If updating the same staff member, remove the old shift first
-          if (oldStaffName === newStaffName) {
-            targetStaffMember.shifts[currentEditingDate] = targetStaffMember.shifts[currentEditingDate].filter(s => {
-              if (currentEditingShift.id && s.id === currentEditingShift.id) {
-                return false;
-              }
-              return true;
-            });
-          }
-
-          // Add the updated shift
-          targetStaffMember.shifts[currentEditingDate].push(updatedShift);
-
-          // Sort shifts by start time
-          targetStaffMember.shifts[currentEditingDate].sort((a, b) => {
-            return convertTimeToMinutes(a.from) - convertTimeToMinutes(b.from);
-          });
-
-          // Re-render and close modal
-          renderStaffData(currentDate);
-          calculateWorkload(currentDate); // Recalculate workload after editing shift
-          closeEditModal();
-          showNotification("Shift updated successfully!");
-      } catch (error) {
-        console.error("Error updating shift:", error);
-        showNotification("Error updating shift. Please try again.");
-      }
-    }
-
-    // Function to delete shift
-    function deleteShift() {
-      if (!currentEditingShift || !currentEditingDate) {
-        console.error("No shift selected for deletion");
-        return;
-      }
-
-      try {
-        const staffName = document.getElementById("editStaffSelect").value;
-        const staffMember = staffData.find(
-          (staff) => staff.name === staffName
-        );
-
-        if (!staffMember) {
-          console.error("Staff member not found:", staffName);
-          showNotification("Error: Staff member not found");
-          return;
-        }
-
-        if (!staffMember.shifts[currentEditingDate]) {
-          console.error("No shifts found for date:", currentEditingDate);
-          showNotification("Error: No shifts found for this date");
-          return;
-        }
-
-        // Find the shift to delete by matching time and room
-        const shiftToDelete = staffMember.shifts[currentEditingDate].find(
-          (shift) => {
-            // Normalize times for comparison
-            const normalizeTime = (time) => {
-              if (!time) return "";
-              // Convert 12-hour format to 24-hour if needed
-              if (
-                time.toLowerCase().includes("am") ||
-                time.toLowerCase().includes("pm")
-              ) {
-                return convertTo24Hour(time);
-              }
-              return time;
-            };
-
-            const shiftFrom = normalizeTime(shift.from);
-            const shiftTo = normalizeTime(shift.to);
-            const currentFrom = normalizeTime(currentEditingShift.from);
-            const currentTo = normalizeTime(currentEditingShift.to);
-
-            // Get room from site if not directly available
-            const shiftRoom = shift.room || getShiftRoom(shift.site);
-            const currentRoom =
-              currentEditingShift.room ||
-              getShiftRoom(currentEditingShift.site);
-
-            const timeMatch =
-              shiftFrom === currentFrom && shiftTo === currentTo;
-            const roomMatch = shiftRoom === currentRoom;
-
-            return timeMatch && roomMatch;
-          }
-        );
-
-        if (!shiftToDelete) {
-          console.error("Shift not found for deletion");
-          showNotification("Error: Shift not found");
-          return;
-        }
-
-        // Remove the shift using the normalized comparison
-        staffMember.shifts[currentEditingDate] = staffMember.shifts[
-          currentEditingDate
-        ].filter((shift) => {
-          const normalizeTime = (time) => {
-            if (!time) return "";
-            if (
-              time.toLowerCase().includes("am") ||
-              time.toLowerCase().includes("pm")
-            ) {
-              return convertTo24Hour(time);
-            }
-            return time;
-          };
-
-          const shiftRoom = shift.room || getShiftRoom(shift.site);
-          const deleteRoom =
-            shiftToDelete.room || getShiftRoom(shiftToDelete.site);
-
-          return (
-            normalizeTime(shift.from) !== normalizeTime(shiftToDelete.from) ||
-            normalizeTime(shift.to) !== normalizeTime(shiftToDelete.to) ||
-            shiftRoom !== deleteRoom
-          );
-        });
-
-        // Clean up empty date entries
-        if (staffMember.shifts[currentEditingDate].length === 0) {
-          delete staffMember.shifts[currentEditingDate];
-        }
-
-        // Close modal first
-        closeEditModal();
-
-        // Then re-render the schedule
-        renderStaffData(currentDate);
-
-        // Show success message
-        showNotification("Shift deleted successfully");
-      } catch (error) {
-        console.error("Error deleting shift:", error);
-        showNotification("Error deleting shift. Please try again.");
-      }
-    }
-
-    // Update the shift block click handler
-    function initializeShiftBlockHandlers() {
-      document.querySelectorAll(".shift-block").forEach((block) => {
-        // Remove existing listeners by cloning
-        const oldClone = block.cloneNode(true);
-        const newBlock = block.parentNode.replaceChild(oldClone, block);
-
-        // Add drag event listeners
-        oldClone.addEventListener("dragstart", handleDragStart);
-        oldClone.addEventListener("dragend", handleDragEnd);
-
-        const date = oldClone.dataset.date;
-        const staffName = oldClone.dataset.staffName;
-        let shiftData;
-
-        try {
-            shiftData = oldClone.dataset.shiftData
-              ? JSON.parse(oldClone.dataset.shiftData)
-              : null;
-        } catch (error) {
-          console.warn("Invalid shift data:", oldClone.dataset.shiftData);
-          return;
-        }
-
-        if (!shiftData) return;
-
-        oldClone.addEventListener("click", (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-            
-          // Remove active class from all shift blocks
-          document.querySelectorAll('.shift-block').forEach(block => {
-            block.classList.remove('active');
-          });
-            
-          // Add active class to clicked shift block
-          oldClone.classList.add('active');
-            
-          openEditModal(shiftData, date, staffName);
-        });
-      });
-    }
-
-    // Add form submit handler
-    document.addEventListener("DOMContentLoaded", function () {
-      const editForm = document.getElementById("editShiftForm");
-      if (editForm) {
-        editForm.addEventListener("submit", handleShiftEdit);
-      }
-      initializeShiftBlockHandlers();
-    });
-
-    // Add staff-room mapping
-    const staffRoomMapping = {
-      "Greg Lane": ["US01", "US02", "US03"],
-      "Arlene Richards": ["CT", "X-Ray"],
-      "Cameron Edwards": ["US01", "US02", "X-Ray"],
-      "Marjorie Hawkins": ["US01", "US02", "US03", "CT"],
-    };
-
-      // Function to update site options based on workload data
-    function updateSiteOptions(staffSelect, siteSelect) {
-        if (!siteSelect) return;
-
-      // Clear existing options
-      siteSelect.innerHTML = '<option value="">Select Site</option>';
-
-        // Get sites from workload data
-        const workloadSites = Object.keys(workloadData);
-        workloadSites.forEach((site) => {
-          const option = document.createElement("option");
-          option.value = site;
-          option.textContent = site;
-          siteSelect.appendChild(option);
-        });
-    }
-
-      // Function to update room options based on selected site from workload data
-    function updateRoomOptions(staffSelect, siteSelect, roomSelect) {
-        if (!siteSelect || !roomSelect) return;
-
-      const selectedSite = siteSelect.value;
-
-      // Clear existing options
-      roomSelect.innerHTML = '<option value="">Select Room</option>';
-
-        if (selectedSite && workloadData[selectedSite]) {
-          // Get all rooms from workload data for the selected site
-          const rooms = Object.keys(workloadData[selectedSite]).filter(room => room !== 'total');
-          rooms.forEach((room) => {
-          const option = document.createElement("option");
-          option.value = room;
-          option.textContent = room;
-          roomSelect.appendChild(option);
-        });
-      }
-    }
-
-    // Initialize form handlers for both add and edit modals
-    document.addEventListener("DOMContentLoaded", function () {
-      // Add modal form handlers
-      const addStaffSelect = document.getElementById("staffSelect");
-      const addSiteSelect = document.getElementById("siteSelect");
-      const addRoomSelect = document.getElementById("roomSelect");
-
-      if (addStaffSelect) {
-        addStaffSelect.addEventListener("change", () => {
-            updateSiteOptions(null, addSiteSelect);
-            updateRoomOptions(null, addSiteSelect, addRoomSelect);
-        });
-      }
-
-      if (addSiteSelect) {
-        addSiteSelect.addEventListener("change", () => {
-            updateRoomOptions(null, addSiteSelect, addRoomSelect);
-        });
-      }
-
-      // Edit modal dependencies
-      const editStaffSelect = document.getElementById("editStaffSelect");
-      const editSiteSelect = document.getElementById("editSiteSelect");
-      const editRoomSelect = document.getElementById("editRoomSelect");
-
-      if (editStaffSelect && editSiteSelect && editRoomSelect) {
-        // Initialize site options
-          updateSiteOptions(null, editSiteSelect);
-
-        // Initialize room options with default site
-        if (editSiteSelect.value) {
-            updateRoomOptions(null, editSiteSelect, editRoomSelect);
-        } else {
-          editSiteSelect.value = "Edmondson Park";
-            updateRoomOptions(null, editSiteSelect, editRoomSelect);
-        }
-
-        // Add event listeners
-        editStaffSelect.addEventListener("change", () => {
-            updateSiteOptions(null, editSiteSelect);
-            updateRoomOptions(null, editSiteSelect, editRoomSelect);
-        });
-
-        editSiteSelect.addEventListener("change", () => {
-            updateRoomOptions(null, editSiteSelect, editRoomSelect);
-        });
-      }
-    });
-
-    // Update the renderShiftBlock function
-    function renderShiftBlock(shift, date, staffName) {
-      const shiftBlock = document.createElement("div");
-      shiftBlock.className = "shift-block";
-      shiftBlock.setAttribute(
-        "data-room",
-        shift.room || getShiftRoom(shift.site)
-      );
-
-      // Ensure times are in 24-hour format
-      let fromTime = shift.from;
-      let toTime = shift.to;
-
-      if (fromTime.includes("am") || fromTime.includes("pm")) {
-        fromTime = convertTo24Hour(fromTime);
-      }
-      if (toTime.includes("am") || toTime.includes("pm")) {
-        toTime = convertTo24Hour(toTime);
-      }
-
-      // Create standardized shift data with all necessary properties
-      const standardizedShift = {
-        ...shift,
-        site: shift.site,
-        room: shift.room || getShiftRoom(shift.site),
-        from: fromTime,
-        to: toTime,
-        id: shift.id || generateUniqueId(),
-      };
-
-      shiftBlock.innerHTML = `
-                <div class="shift-title">${standardizedShift.site}</div>
-                <div class="shift-time">${fromTime} - ${toTime}</div>
-            `;
-      shiftBlock.draggable = true;
-
-      // Store complete shift data
-      shiftBlock.dataset.shiftData = JSON.stringify(standardizedShift);
-      shiftBlock.dataset.date = date;
-      shiftBlock.dataset.staffName = staffName;
-
-      return shiftBlock;
-    }
-
-    // Remove old click handlers and initialize new ones
-    function initializeShiftBlockHandlers() {
-      document.querySelectorAll(".shift-block").forEach((block) => {
-        // Remove existing listeners by cloning
-        const oldClone = block.cloneNode(true);
-        const newBlock = block.parentNode.replaceChild(oldClone, block);
-
-        // Add drag event listeners
-        oldClone.addEventListener("dragstart", handleDragStart);
-        oldClone.addEventListener("dragend", handleDragEnd);
-
-        const date = oldClone.dataset.date;
-        const staffName = oldClone.dataset.staffName;
-        let shiftData;
-
-        try {
-            shiftData = oldClone.dataset.shiftData
-              ? JSON.parse(oldClone.dataset.shiftData)
-              : null;
-        } catch (error) {
-          console.warn("Invalid shift data:", oldClone.dataset.shiftData);
-          return;
-        }
-
-        if (!shiftData) return;
-
-        oldClone.addEventListener("click", (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-            
-          // Remove active class from all shift blocks
-          document.querySelectorAll('.shift-block').forEach(block => {
-            block.classList.remove('active');
-          });
-            
-          // Add active class to clicked shift block
-          oldClone.classList.add('active');
-            
-          openEditModal(shiftData, date, staffName);
-        });
-      });
-    }
-
-    // Update the openEditModal function
-    function openEditModal(shift, date, staffName) {
-      console.log("Opening edit modal with:", { shift, date, staffName }); // Debug log
-
-      if (!shift || !date || !staffName) {
-        console.error("Missing required data:", { shift, date, staffName });
-        return;
-      }
-
-      const modal = document.getElementById("editShiftModal");
-      currentEditingShift = shift;
-      currentEditingDate = date;
-
-      // Show the modal
-      modal.classList.add("show");
-      requestAnimationFrame(() => {
-        modal.classList.add("active");
-      });
-
-      try {
-        // Get form elements
-        const editStaffSelect = document.getElementById("editStaffSelect");
-        const editSiteSelect = document.getElementById("editSiteSelect");
-        const editRoomSelect = document.getElementById("editRoomSelect");
-        const editFromTime = document.getElementById("editFromTime");
-        const editToTime = document.getElementById("editToTime");
-
-        if (
-          !editStaffSelect ||
-          !editSiteSelect ||
-          !editRoomSelect ||
-          !editFromTime ||
-          !editToTime
-        ) {
-          console.error("Missing form elements");
-          return;
-        }
-
-          // Set staff and store original staff name
-        editStaffSelect.value = staffName;
-          editStaffSelect.dataset.originalStaff = staffName;
-
-          // Update site options using workload data
-          updateSiteOptions(null, editSiteSelect);
-
-        // Parse site and room from shift data
-        let site = "";
-        let room = "";
-
-        if (shift.site && shift.site.includes(" | ")) {
-          [site, room] = shift.site.split(" | ");
-        } else if (shift.site) {
-          // Handle cases where site is in different format
-          if (shift.site.includes("Edmondson Park")) {
-            site = "Edmondson Park";
-          } else if (shift.site.includes("Ingleburn")) {
-            site = "Ingleburn";
-          }
-          // Extract room from shift data
-          room = shift.room || getShiftRoom(shift.site);
-        }
-
-        // Set site and update room options
-        if (site) {
-          editSiteSelect.value = site;
-            updateRoomOptions(null, editSiteSelect, editRoomSelect);
-        } else {
-          // Default to Edmondson Park if no site is found
-          editSiteSelect.value = "Edmondson Park";
-            updateRoomOptions(null, editSiteSelect, editRoomSelect);
-        }
-
-        // Set room after options are updated
-        if (room) {
-          editRoomSelect.value = room;
-        }
-
-        // Handle time values
-        let fromTime = shift.from || "";
-        let toTime = shift.to || "";
-
-        // Convert times to 24-hour format if needed
-        if (fromTime.includes("am") || fromTime.includes("pm")) {
-          fromTime = convertTo24Hour(fromTime);
-        }
-        if (toTime.includes("am") || toTime.includes("pm")) {
-          toTime = convertTo24Hour(toTime);
-        }
-
-        // Ensure times are in HH:mm format
-        fromTime = fromTime.padStart(5, "0");
-        toTime = toTime.padStart(5, "0");
-
-        editFromTime.value = fromTime;
-        editToTime.value = toTime;
-
-        // Update modal title with date
-        const modalTitle = modal.querySelector(".modal-title");
-        if (modalTitle && date) {
-          const dateObj = new Date(date);
-          const formattedDate = dateObj.toLocaleDateString("en-US", {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          });
-            modalTitle.textContent = `Edit working hours`;
-        }
-      } catch (error) {
-        console.error("Error in openEditModal:", error);
-      }
-    }
-
-    // Update the fillEditShiftDetails function
-    function fillEditShiftDetails(site, room, fromTime, toTime) {
-      const editStaffSelect = document.getElementById("editStaffSelect");
-      const editSiteSelect = document.getElementById("editSiteSelect");
-      const editRoomSelect = document.getElementById("editRoomSelect");
-        const editFromTime = document.getElementById("editFromTime");
-        const editToTime = document.getElementById("editToTime");
-
-        // Set site value first (handle both formats: "Site | Room" or just "Site")
-        const actualSite = site.includes(" | ") ? site.split(" | ")[0] : site;
-        editSiteSelect.value = actualSite;
-
-        // Update room options based on the selected site and staff
-      updateRoomOptions(editStaffSelect, editSiteSelect, editRoomSelect);
-
-        // Set other form values after room options are updated
-      editRoomSelect.value = room;
-        editFromTime.value = fromTime;
-        editToTime.value = toTime;
-
-        // Add visual feedback for suggestions
-      const suggestions = document.querySelectorAll(".shift-suggestion");
-      suggestions.forEach((suggestion) => {
-        suggestion.style.opacity = "0.7";
-      });
-
-        // Highlight the selected suggestion
-      event.currentTarget.style.opacity = "1";
-    }
-
-    // Update the staff config to include all staff members
-    const staffConfig = {
-      "Greg Lane": {
-        type: "technologist",
-        sites: ["Edmondson Park", "Ingleburn"],
-        rooms: {
-          "Edmondson Park": ["US01", "US02", "US03"],
-          Ingleburn: ["US01", "US02"],
-        },
-      },
-      "Arlene Richards": {
-        sites: ["Edmondson Park", "Ingleburn"],
-        rooms: {
-          "Edmondson Park": ["CT"],
-          Ingleburn: ["CT"],
-        },
-      },
-      "Cameron Edwards": {
-        sites: ["Edmondson Park", "Ingleburn"],
-        rooms: {
-          "Edmondson Park": ["US01", "US02", "X-Ray"],
-          Ingleburn: ["US01", "US02", "X-Ray"],
-        },
-      },
-      "Marjorie Hawkins": {
-        sites: ["Edmondson Park", "Ingleburn"],
-        rooms: {
-          "Edmondson Park": ["US01", "US02", "US03", "CT"],
-          Ingleburn: ["US01", "US02", "CT"],
-        },
-      },
-      "Sarah Chen": {
-        sites: ["Edmondson Park", "Ingleburn"],
-        rooms: {
-          "Edmondson Park": ["US01", "US02", "US03"],
-          Ingleburn: ["US01", "US02"],
-        },
-      },
-      "Michael Torres": {
-        sites: ["Edmondson Park", "Ingleburn"],
-        rooms: {
-          "Edmondson Park": ["CT", "US03"],
-          Ingleburn: ["CT", "US01"],
-        },
-      },
-      "Emily Parker": {
-        sites: ["Edmondson Park", "Ingleburn"],
-        rooms: {
-          "Edmondson Park": ["X-Ray"],
-          Ingleburn: ["X-Ray"],
-        },
-      },
-      "David Wong": {
-        sites: ["Edmondson Park", "Ingleburn"],
-        rooms: {
-          "Edmondson Park": ["CT"],
-          Ingleburn: ["CT"],
-        },
-      },
-      "Rachel Martinez": {
-        sites: ["Edmondson Park", "Ingleburn"],
-        rooms: {
-          "Edmondson Park": ["US01", "US02"],
-          Ingleburn: ["US01", "US02"],
-        },
-      },
-      "James Wilson": {
-        sites: ["Edmondson Park", "Ingleburn"],
-        rooms: {
-          "Edmondson Park": ["US01"],
-          Ingleburn: ["US01"],
-        },
-      },
-      "Lisa Thompson": {
-        sites: ["Edmondson Park", "Ingleburn"],
-        rooms: {
-          "Edmondson Park": ["X-Ray"],
-          Ingleburn: ["X-Ray"],
-        },
-      },
-      "Robert Kim": {
-        sites: ["Edmondson Park", "Ingleburn"],
-        rooms: {
-          "Edmondson Park": ["US02", "US03"],
-          Ingleburn: ["US02"],
-        },
-      },
-      "Amanda Foster": {
-        sites: ["Edmondson Park", "Ingleburn"],
-        rooms: {
-          "Edmondson Park": ["US01", "US03"],
-          Ingleburn: ["US01"],
-        },
-      },
-      "Daniel Lee": {
-        sites: ["Edmondson Park", "Ingleburn"],
-        rooms: {
-          "Edmondson Park": ["CT"],
-          Ingleburn: ["CT"],
-        },
-      },
-      "Sophie Anderson": {
-        sites: ["Edmondson Park", "Ingleburn"],
-        rooms: {
-          "Edmondson Park": ["US01", "US02"],
-          Ingleburn: ["US02"],
-        },
-      },
-    };
-
-    // Helper function to get room from shift data
-    function getShiftRoom(siteText) {
-      if (!siteText) return "";
-
-      const roomPatterns = {
-        US01: /US01|US 01/i,
-        US02: /US02|US 02/i,
-        US03: /US03|US 03/i,
-        CT: /CT/i,
-        "X-Ray": /X-Ray|XRay|X Ray/i,
-      };
-
-      for (const [room, pattern] of Object.entries(roomPatterns)) {
-        if (pattern.test(siteText)) {
-          return room;
-        }
-      }
-      return "";
-    }
-
-      function generateTimeOptions(startHour, endHour) {
-        const options = [];
-        for (let hour = startHour; hour <= endHour; hour++) {
-          const hourStr = hour.toString().padStart(2, '0');
-          options.push(`<option value="${hourStr}:00">${hourStr}:00</option>`);
-          options.push(`<option value="${hourStr}:30">${hourStr}:30</option>`);
-        }
-        return options.join('\n');
-      }
-
-      // Time calculation helper functions
-      function calculateShiftDuration(fromTime, toTime) {
-        const startMinutes = convertTimeToMinutes(fromTime);
-        const endMinutes = convertTimeToMinutes(toTime);
-        let duration = endMinutes - startMinutes;
-
-        // If end time is less than start time, assume it's next day
-        if (duration < 0) {
-          duration += 24 * 60; // Add 24 hours in minutes
-        }
-
-        return duration / 60; // Convert to hours
-      }
-
-      function formatHours(totalHours) {
-        if (totalHours === 0) return "0h";
-        
-        const hours = Math.floor(totalHours);
-        const minutes = Math.round((totalHours - hours) * 60);
-
-        if (minutes === 0) {
-          return `${hours}h`;
-        } else if (hours === 0) {
-          return `${minutes}min`;
-        }
-        return `${hours}h ${minutes}min`;
-      }
-
-      // Update the time dropdowns when the page loads
-      document.addEventListener("DOMContentLoaded", function() {
-        const fromTimeSelects = document.querySelectorAll('#fromTime, #editFromTime');
-        const toTimeSelects = document.querySelectorAll('#toTime, #editToTime');
-        
-        fromTimeSelects.forEach(select => {
-          select.innerHTML = `<option value="">Start Time</option>${generateTimeOptions(8, 17)}`;
-        });
-        
-        toTimeSelects.forEach(select => {
-          select.innerHTML = `<option value="">End Time</option>${generateTimeOptions(11, 20)}`;
-        });
-      });
-  </script>
-</body>
+          <div class="modal-buttons">
+            <button type="button" class="delete-btn" onclick="deleteShift()">
+              <span class="delete-icon"
+                ><img
+                  src="./assets/delete.svg"
+                  alt="delete"
+                  width="12"
+                  height="14"
+              /></span>
+            </button>
+            <button type="submit" class="save-btn">
+              <img
+                src="./assets/right.svg"
+                alt="save"
+                width="12"
+                height="14"
+                style="
+                  width: 14;
+                  height: 10.415624618530273;
+                  top: 2.58px;
+                  left: 1px;
+                "
+              />
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="assets/js/employee.js"></script>
+  </body>
 </html>
