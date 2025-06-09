@@ -1,29 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee Dashboard</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="../assets/css/employee-new.css"
-      type="text/css"
-    />
-  </head>
-  <body>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/employee-new.css" type="text/css" />
+</head>
+<body>
     <div class="container">
-      <div class="table-container">
-        <div class="table-scroll-container">
-          <table id="employeeTable"></table>
+        <div class="table-container">
+                             <div class="table-scroll-container">
+                    <div class="table-header">
+                      <div class="table-header-left">
+                        <div class="date-range">Staff Skills</div>
+                      </div>
+                      <div class="table-header-right">
+                        <div class="filter-dropdown" id="siteFilter">
+                          <div class="selected-text">All sites</div>
+                         <span class="dropdown-arrow"
+                           ><img
+                             src="../assets/dropdown-arrow.svg"
+                             alt="dropdown-arrow"
+                             width="10px"
+                             height="6px"
+                         /></span>
+                          <div class="dropdown-content">
+                            <label class="dropdown-item">
+                              <input type="checkbox" value="all" checked /> All sites
+                            </label>
+                            <label class="dropdown-item">
+                              <input type="checkbox" value="edmondson" /> Edmondson Park
+                            </label>
+                            <label class="dropdown-item">
+                              <input type="checkbox" value="ingleburn" /> Ingleburn
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="table-body-container">
+                      <table id="employeeTable">
+            </table>
         </div>
-      </div>
+    </div>
     </div>
     <div id="tooltip-container"></div>
 
     <script src="../assets/js/employee-new.js"></script>
-  </body>
+</body>
 </html>
